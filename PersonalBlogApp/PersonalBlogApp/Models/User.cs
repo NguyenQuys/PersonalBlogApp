@@ -21,5 +21,6 @@ namespace PersonalBlogApp.Models
         public string AvatarUrl { get; set; }
 
         public ICollection<Blog> Blogs { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }
