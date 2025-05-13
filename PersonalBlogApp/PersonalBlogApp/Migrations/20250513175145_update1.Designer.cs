@@ -12,8 +12,8 @@ using PersonalBlogApp.Models;
 namespace PersonalBlogApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250513062911_init")]
-    partial class init
+    [Migration("20250513175145_update1")]
+    partial class update1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -4,42 +4,57 @@ using PersonalBlogApp.Models;
 
 namespace PersonalBlogApp.Middlewares
 {
-    public class ExceptionMiddleware
+    public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await _next(context); // Gọi Middleware tiếp theo hoặc Controller
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                
+                _logger.LogError(ex, "Unhandled Exception occurred.");
+
+                context.Response.StatusCode = ex switch
+                {
+                    ArgumentException => 400, 
+                    KeyNotFoundException => 404, 
+                    UnauthorizedAccessException => 401,
+                    _ => 500 
+                };
+
+                context.Response.ContentType = "application/json";
+
+                var response = new
+                {
+                    message = ex.Message,
+                    errorType = ex.GetType().Name,
+                    timestamp = DateTime.UtcNow,
+                    statusCode = context.Response.StatusCode
+                };
+
+                await context.Response.WriteAsJsonAsync(response);
             }
         }
+    }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    // **Tạo Extension Method để Đăng ký Middleware**
+    public static class MiddlewareExtensions
+    {
+        public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder builder)
         {
-            var statusCode = exception is CustomException customException
-                ? customException.StatusCode
-                : (int)HttpStatusCode.InternalServerError;
-
-            var response = new
-            {
-                Message = exception.Message,
-                StatusCode = statusCode
-            };
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = statusCode;
-
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            return builder.UseMiddleware<ExceptionHandlingMiddleware>();
         }
     }
 }

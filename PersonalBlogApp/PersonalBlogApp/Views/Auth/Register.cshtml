@@ -1,11 +1,9 @@
-﻿@model PersonalBlogApp.Models.User
+﻿@model PersonalBlogApp.Requests.UserRequest
 
-@* <form asp-action="Register" method="post">
-    <input asp-for="UserName" placeholder="Username" />
-    <input asp-for="Email" placeholder="Email" />
-    <input asp-for="PasswordHash" placeholder="Password" type="password" />
-    <button type="submit">Đăng ký</button>
-</form> *@
+@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+{
+	<div class="text-danger">@error.ErrorMessage</div>
+}
 
 <div id="register_form">
 	<form id="form-register" enctype="multipart/form-data">
@@ -25,7 +23,7 @@
 			<label asp-for="AvatarUrl" class="form-label">Ảnh đại diện</label>
 			<input type="file" class="form-control" id="avatar-register">
 		</div>
-		<button type="submit" onclick="Register()" class="btn btn-primary">Đăng ký</button>
+		<button type="button" onclick="Register()" class="btn btn-primary">Đăng ký</button>
 	</form>
 </div>
 <script src="~/js/auth.js" asp-append-version="true"></script>

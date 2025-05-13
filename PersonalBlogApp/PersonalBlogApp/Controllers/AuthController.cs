@@ -7,10 +7,10 @@ namespace PersonalBlogApp.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -20,25 +20,34 @@ namespace PersonalBlogApp.Controllers
         public IActionResult Register() => View();
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(UserRequest request)
+        public async Task<IActionResult> Register([FromForm] UserRequest request)
         {
             string fileName = "";
-            if (request.AvatarUrl != null) {
-                fileName = await SaveImageFileAsync(request.AvatarUrl); 
+            if (request.AvatarUrl != null)
+            {
+                fileName = await SaveImageFileAsync(request.AvatarUrl);
             }
 
             var user = new User
             {
                 UserName = request.UserName,
                 Email = request.Email,
-                PasswordHash = request.PasswordHash,
                 AvatarUrl = fileName
             };
 
-            var result = await _userManager.CreateAsync(user);
-            if (result.Succeeded) {
-                return RedirectToAction("Index", "Home");
+            var result = await _userManager.CreateAsync(user, request.PasswordHash);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+                return Json(new { statusCode = 201, message = "Thêm thành công"});
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
             return View();
         }
@@ -60,7 +69,9 @@ namespace PersonalBlogApp.Controllers
                 {
                     await file.CopyToAsync(stream);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 throw new Exception("Không thể lưu file. Lỗi: " + ex.Message);
             }
 

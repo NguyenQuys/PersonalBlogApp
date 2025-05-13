@@ -1,27 +1,26 @@
-﻿
-
-async function Register() {
-    console.log($('#email-register').val());
+﻿async function Register() {
     const formData = new FormData();
+    const file = document.getElementById("avatar-register").files[0];
+    console.log("Selected file:", file); // ✅ Kiểm tra file có chọn chưa
 
     formData.append("Email", $('#email-register').val());
-    formData.append("UserName", document.getElementById("username-register").value);
-    formData.append("Password", document.getElementById("password-register").value);
-    formData.append("Avatar", document.getElementById("avatar-register").files[0]);
-    
+    formData.append("UserName", $('#username-register').val());
+    formData.append("PasswordHash", $('#password-register').val());
+    formData.append("AvatarUrl", file);
+    console.log(formData);
     try {
         const response = await fetch("/Auth/Register", {
-            method: "POST",
+            method: 'POST',
             body: formData
         });
 
         if (response.ok) {
-            const result = await response.json();
-            console.log(result);
+            const result = await response.json(); 
+            toastr.success(result.message);
         } else {
-            console.error("loi server:", response.statusText);
+            console.error("Server error:", response.statusText);
         }
-    } catch (er) {
-        console.error(er)
+    } catch (err) {
+        console.error(err);
     }
 }
