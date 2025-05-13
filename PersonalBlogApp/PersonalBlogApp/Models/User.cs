@@ -1,25 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using PersonalBlogApp.Enums;
 
 namespace PersonalBlogApp.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-
-        [MaxLength(20)]
-        public string UserName { get; set; }
-
-        public string PasswordHash { get; set; }
-
-        [MaxLength(50)]
-        public string Email {  get; set; }
-
-        public RoleEnum Role { get; set; }
-
         [MaxLength(150)]
-        public string AvatarUrl { get; set; }
-
+        public string? AvatarUrl { get; set; }
         public ICollection<Blog> Blogs { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }

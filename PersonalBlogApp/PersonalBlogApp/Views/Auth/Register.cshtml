@@ -1,0 +1,31 @@
+﻿@model PersonalBlogApp.Models.User
+
+@* <form asp-action="Register" method="post">
+    <input asp-for="UserName" placeholder="Username" />
+    <input asp-for="Email" placeholder="Email" />
+    <input asp-for="PasswordHash" placeholder="Password" type="password" />
+    <button type="submit">Đăng ký</button>
+</form> *@
+
+<div id="register_form">
+	<form id="form-register" enctype="multipart/form-data">
+		<div class="mb-3">
+			<label asp-for="Email" class="form-label">Email</label>
+			<input type="email" class="form-control" id="email-register" placeholder="Nhập Email">
+		</div>
+		<div class="mb-3">
+			<label asp-for="UserName" class="form-label">Username</label>
+			<input type="text" class="form-control" id="username-register" placeholder="Nhập username">
+		</div>
+		<div class="mb-3">
+			<label asp-for="PasswordHash" class="form-label">Mật khẩu</label>
+			<input type="password" class="form-control" id="password-register" placeholder="Nhập mật khẩu">
+		</div>
+		<div class="mb-3">
+			<label asp-for="AvatarUrl" class="form-label">Ảnh đại diện</label>
+			<input type="file" class="form-control" id="avatar-register">
+		</div>
+		<button type="submit" onclick="Register()" class="btn btn-primary">Đăng ký</button>
+	</form>
+</div>
+<script src="~/js/auth.js" asp-append-version="true"></script>

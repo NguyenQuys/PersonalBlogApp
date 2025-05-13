@@ -1,23 +1,44 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PersonalBlogApp.Models;
+using PersonalBlogApp.Requests;
+using PersonalBlogApp.Services;
 
 namespace PersonalBlogApp.Controllers
 {
     public class UsersController : Controller
     {
-        public ActionResult Index()
+        private readonly IUserService _userService;
+
+        public UsersController(IUserService userService)
         {
-            return View();
+            _userService = userService;
+        }
+
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var getAllUsers = await _userService.GetAllAsync();
+            return View(getAllUsers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateAsync()
+        {
+            //var newUser = new User
+            //{
+            //    UserName = request.UserName,
+            //    Email = request.Email,
+            //    PasswordHash = request.PasswordHash,
+            //    AvatarUrl = request.AvatarUrl
+            //};
+
+            //var result = await _userService.CreateAsync(newUser);
+            return Ok();
         }
 
         // GET: UsersController/Details/5
         public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: UsersController/Create
-        public ActionResult Create()
         {
             return View();
         }

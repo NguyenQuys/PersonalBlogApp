@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PersonalBlogApp.Models;
+using PersonalBlogApp.Repositories;
+using PersonalBlogApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,23 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
+
+builder.Services.AddIdentity<IdentityUser,IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
+
+// Services
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Repos
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
@@ -18,6 +38,35 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//static async Task CreateRoles(IServiceProvider serviceProvider)
+//{
+//    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+//    string[] roleNames = { "Admin", "User" };
+
+//    foreach (var roleName in roleNames)
+//    {
+//        var roleExists = await roleManager.RoleExistsAsync(roleName);
+//        if (!roleExists)
+//        {
+//            var role = new IdentityRole
+//            {
+//                Name = roleName,
+//                ConcurrencyStamp = Guid.NewGuid().ToString()
+//            };
+//            await roleManager.CreateAsync(role);
+//        }
+//    }
+//}
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    await CreateRoles(services);
+//}
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

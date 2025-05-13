@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PersonalBlogApp.Requests
 {
-    public class UpdateUserRequest
+    public class UserRequest
     {
         [MaxLength(20)]
         public string UserName { get; set; }
@@ -13,9 +13,7 @@ namespace PersonalBlogApp.Requests
         [MaxLength(50)]
         public string Email { get; set; }
 
-        public RoleEnum Role { get; set; }
-
         [MaxLength(150)]
-        public string AvatarUrl { get; set; }
+        public IFormFile? AvatarUrl { get; set; }
     }
 }
