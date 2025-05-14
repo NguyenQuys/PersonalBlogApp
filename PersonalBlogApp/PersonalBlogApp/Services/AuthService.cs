@@ -8,8 +8,9 @@ namespace PersonalBlogApp.Services
     public interface IAuthService
     {
         Task<ApiResponse> Login(LoginRequest request);
-
         Task<ApiResponse> Register(UserRequest request);
+        Task<ApiResponse> Logout();
+        Task<ApiResponse> AccessDenied();
     }
 
     public class AuthService : IAuthService
@@ -63,7 +64,6 @@ namespace PersonalBlogApp.Services
                 };
             }
         }
-
         public async Task<ApiResponse> Login(LoginRequest request)
         {
             if(request.UserName == null || request.PasswordHash == null)
@@ -87,6 +87,25 @@ namespace PersonalBlogApp.Services
             {
                 Status = 200,
                 Message = "Đăng nhập thành công"
+            };
+        }
+
+        public async Task<ApiResponse> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return new ApiResponse
+            {
+                Status = 200,
+                Message = "Đăng xuất thành công"
+            };
+        }
+
+        public async Task<ApiResponse> AccessDenied()
+        {
+            return new ApiResponse
+            {
+                Status = 401,
+                Message = "Bạn không có quyền truy cập vào chức năng này"
             };
         }
 

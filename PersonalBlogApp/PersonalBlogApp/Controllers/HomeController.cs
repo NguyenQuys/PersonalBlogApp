@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using PersonalBlogApp.Models;
 
@@ -15,6 +16,11 @@ namespace PersonalBlogApp.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                var username = User.Identity.Name;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            }
             return View();
         }
 
