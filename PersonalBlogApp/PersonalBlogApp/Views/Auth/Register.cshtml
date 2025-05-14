@@ -1,23 +1,23 @@
 ﻿@model PersonalBlogApp.Requests.UserRequest
 
 <div id="register_form" class="container">
-	<form id="form-register" enctype="multipart/form-data">
+	<form asp-action="Register" enctype="multipart/form-data">
 		<div class="mb-3">
 			<label asp-for="Email" class="form-label">Email</label>
-			<input type="email" class="form-control" id="email-register" placeholder="Nhập Email">
+			<input type="email" class="form-control" placeholder="Enter Email">
 		</div>
 		<div class="mb-3">
 			<label asp-for="UserName" class="form-label">Username</label>
-			<input type="text" class="form-control" id="username-register" placeholder="Nhập username">
+			<input type="text" class="form-control" placeholder="Enter username">
 		</div>
 		<div class="mb-3">
 			<label asp-for="PasswordHash" class="form-label">Mật khẩu</label>
-			<input type="password" class="form-control" id="password-register" placeholder="Nhập mật khẩu">
+			<input type="password" class="form-control" placeholder="Enter Password">
 		</div>
 		<div class="mb-3">
-			<label asp-for="AvatarUrl" class="form-label">Ảnh đại diện</label>
-			<input type="file" class="form-control" id="avatar-register">
+			<label asp-for="AvatarUrl" class="form-label">Avatar</label>
+			<input type="file" class="form-control">
 		</div>
-		<button type="button" onclick="Register()" class="btn btn-primary">Đăng ký</button>
+		<button type="button" onclick="Register()" class="btn btn-primary">Sign Up</button>
 	</form>
 </div>
