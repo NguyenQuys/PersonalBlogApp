@@ -26,6 +26,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Repos
 builder.Services.AddScoped<IUserRepository, UserRepository>();

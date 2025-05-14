@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Responses\" />
     <Folder Include="wwwroot\images\avatar\" />
   </ItemGroup>
 

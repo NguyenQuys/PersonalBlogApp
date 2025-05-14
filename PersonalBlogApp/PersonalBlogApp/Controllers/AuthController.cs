@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
+using PersonalBlogApp.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PersonalBlogApp.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly IAuthService _authService;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -22,60 +22,18 @@ namespace PersonalBlogApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] UserRequest request)
         {
-            string fileName = "";
-            if (request.AvatarUrl != null)
-            {
-                fileName = await SaveImageFileAsync(request.AvatarUrl);
-            }
-
-            var user = new User
-            {
-                UserName = request.UserName,
-                Email = request.Email,
-                AvatarUrl = fileName
-            };
-
-            var result = await _userManager.CreateAsync(user, request.PasswordHash);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-                return Json(new { statusCode = 201, message = "Thêm thành công"});
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-            return View();
+            var register = await _authService.Register(request);
+            return Json(register);
         }
 
-        private async Task<string> SaveImageFileAsync(IFormFile file)
+        [HttpGet]
+        public async Task<IActionResult> Login() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> Login([FromForm] LoginRequest request)
         {
-            var folderPath = Path.Combine("wwwroot/images/avatar");
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(folderPath, fileName);
-
-            try
-            {
-                if (Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Không thể lưu file. Lỗi: " + ex.Message);
-            }
-
-            return "/images/avatar" + fileName;
+            var result = await _authService.Login(request);
+            return Json(result);
         }
     }
 }

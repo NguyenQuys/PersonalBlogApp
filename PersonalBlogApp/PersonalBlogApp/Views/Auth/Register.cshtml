@@ -1,11 +1,6 @@
 ﻿@model PersonalBlogApp.Requests.UserRequest
 
-@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-{
-	<div class="text-danger">@error.ErrorMessage</div>
-}
-
-<div id="register_form">
+<div id="register_form" class="container">
 	<form id="form-register" enctype="multipart/form-data">
 		<div class="mb-3">
 			<label asp-for="Email" class="form-label">Email</label>

@@ -1,0 +1,22 @@
+﻿@model PersonalBlogApp.Requests.LoginRequest
+
+<div class="container">
+	<form>
+		<div class="mb-3">
+			<label asp-for="UserName" class="form-label">Username</label>
+			<input type="text" class="form-control" id="username-login" placeholder="Nhập UserName">
+		</div>
+		<div class="mb-3">
+			<label asp-for="PasswordHash" class="form-label">Mật khẩu</label>
+			<input type="password" class="form-control" id="password-login" placeholder="Nhập mật khẩu">
+		</div>
+		<button type="button" onclick="Login()" class="btn btn-primary">Đăng nhập</button>
+	</form>
+	<div class="loading spinner-border text-primary d-none" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
+<div>
+	<h3>Bạn chưa có tài khoản <span><a asp-action="Register">Đăng ký ngay</a></span></h3>
+</div>
+<script src="~/js/auth.js" asp-append-version="true"></script>
