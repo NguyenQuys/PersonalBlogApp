@@ -55,39 +55,53 @@ namespace PersonalBlogApp.Services
             {
                 foreach (var errorResult in result.Errors)
                 {
-                    errors.Add(errorResult.Description + "<br>");
+                    errors.Add(errorResult.Description);
                 }
                 return new ApiResponse
                 {
                     Status = 400,
-                    Message = string.Join("<br>", errors)
+                    //Message = string.Join("<br>", errors),
+                    Errors = errors
                 };
             }
         }
         public async Task<ApiResponse> Login(LoginRequest request)
         {
-            if(request.UserName == null || request.PasswordHash == null)
+            string error = "";
+            if (request.UserName == null || request.PasswordHash == null)
             {
-                throw new ArgumentException("Không được để trống");
+                error = "Không được để trống";
             }
 
             var exstingUser = await _userManager.FindByNameAsync(request.UserName);
 
             if (exstingUser == null) {
-                throw new KeyNotFoundException("Không tồn tại user này");
+                error = "Không tồn tại user này";
             }
 
             var result = await _signInManager.PasswordSignInAsync(exstingUser, request.PasswordHash, isPersistent: false, lockoutOnFailure: false);
 
             if (!result.Succeeded) {
-                throw new ArgumentException("Sai mật khẩu. Vui lòng nhập lại");
+                error = "Sai mật khẩu. Vui lòng nhập lại";
             }
 
-            return new ApiResponse
+            if(error == null)
             {
-                Status = 200,
-                Message = "Đăng nhập thành công"
-            };
+                return new ApiResponse
+                {
+                    Status = 400,
+                    Message = error
+                };
+            }
+            else
+            {
+                return new ApiResponse
+                {
+                    Status = 200,
+                    Message = "Đăng nhập thành công"
+                };
+            }
+          
         }
 
         public async Task<ApiResponse> Logout()
