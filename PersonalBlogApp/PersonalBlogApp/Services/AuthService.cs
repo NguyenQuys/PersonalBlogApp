@@ -132,7 +132,7 @@ namespace PersonalBlogApp.Services
                 throw new Exception("Không thể lưu file. Lỗi: " + ex.Message);
             }
 
-            return "/images/avatar" + fileName;
+            return "/images/avatar/" + fileName;
         }
     }
 }

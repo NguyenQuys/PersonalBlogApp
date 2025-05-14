@@ -49,7 +49,7 @@ async function Login() {
         });
 
         const result = await response.json();
-        if (response.status === 200) {
+        if (result.status === 200) {
             toastr.success(result.message);
             window.location.href = "/Home/Index"
         } else {

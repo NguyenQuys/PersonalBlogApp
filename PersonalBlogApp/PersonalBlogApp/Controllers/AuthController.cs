@@ -52,8 +52,9 @@ namespace PersonalBlogApp.Controllers
         [HttpGet]
         public async Task <IActionResult> AccessDenied()
         {
-            var result = await _authService.AccessDenied();
-            return Json(result);
+            //var result = await _authService.AccessDenied();
+            //return Json(result);
+            return View();
         }
     }
 }

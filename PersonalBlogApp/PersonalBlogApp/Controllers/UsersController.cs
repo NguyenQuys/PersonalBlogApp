@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PersonalBlogApp.Models;
@@ -16,25 +17,12 @@ namespace PersonalBlogApp.Controllers
             _userService = userService;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             var getAllUsers = await _userService.GetAllAsync();
             return View(getAllUsers);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> CreateAsync()
-        {
-            //var newUser = new User
-            //{
-            //    UserName = request.UserName,
-            //    Email = request.Email,
-            //    PasswordHash = request.PasswordHash,
-            //    AvatarUrl = request.AvatarUrl
-            //};
-
-            //var result = await _userService.CreateAsync(newUser);
-            return Ok();
         }
 
         // GET: UsersController/Details/5
