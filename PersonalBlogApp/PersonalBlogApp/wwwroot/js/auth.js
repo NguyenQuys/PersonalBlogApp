@@ -18,7 +18,8 @@ async function Register() {
         });
 
         const result = await response.json();
-        if (response.status === 201) {
+        console.log(result);
+        if (result.status === 201) {
             toastr.success(result.message);
             setTimeout(function () {
                 window.location.href = "/Auth/Login";
@@ -68,7 +69,7 @@ async function Logout() {
             });
 
             const result = await response.json();
-            if (response.status === 200) {
+            if (result.status === 200) {
                 toastr.success(result.message);
                 setTimeout(function () {
                     window.location.href = "/Auth/Login";
