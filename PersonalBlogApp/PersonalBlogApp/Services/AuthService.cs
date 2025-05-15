@@ -28,10 +28,6 @@ namespace PersonalBlogApp.Services
         {
             string fileName = "";
             List<string> errors = new List<string>();
-            if (request.AvatarUrl != null)
-            {
-                fileName = await SaveImageFileAsync(request.AvatarUrl);
-            }
 
             var user = new User
             {
@@ -45,10 +41,16 @@ namespace PersonalBlogApp.Services
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "User");
+
+                if (request.AvatarUrl != null)
+                {
+                    fileName = await SaveImageFileAsync(request.AvatarUrl);
+                }
+
                 return new ApiResponse
                 {
                     Status = 201,
-                    Message = "Đăng ký thành công"
+                    Message = "Sign Up Successfully"
                 };
             }
             else
