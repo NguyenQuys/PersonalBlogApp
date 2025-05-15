@@ -38,13 +38,15 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a onclick="Logout()" class="nav-link text-dark" >Đăng xuất</a>
+                                <form asp-action="Logout" asp-controller="Auth" method="post">
+                                    <button type="submit" class="btn btn-link nav-link text-dark">Logout</button>
+                                </form>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a style="cursor: pointer" class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+                                <a style="cursor: pointer" class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
                         }
                     </ul>

@@ -7,6 +7,8 @@ using PersonalBlogApp.Requests;
 using PersonalBlogApp.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace PersonalBlogApp.Controllers
 {
@@ -26,8 +28,22 @@ namespace PersonalBlogApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromForm] UserRequest request)
         {
-            var register = await _authService.Register(request);
-            return Json(register);
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
+            var result = await _authService.Register(request);
+            if (result.Status != 201)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+                return View(request);
+
+            }
+            return RedirectToAction("Login");
         }
 
         [HttpGet]
@@ -37,16 +53,25 @@ namespace PersonalBlogApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromForm] LoginRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+
             var result = await _authService.Login(request);
-            return Json(result);
+            if (result.Status != 200)
+            { 
+               ModelState.AddModelError(string.Empty, result.Message);              
+               return View(request);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Logout()
         {
             var result = await _authService.Logout();
-            return Json(result);
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

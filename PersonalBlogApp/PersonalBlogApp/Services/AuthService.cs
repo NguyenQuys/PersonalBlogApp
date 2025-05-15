@@ -28,10 +28,6 @@ namespace PersonalBlogApp.Services
         {
             string fileName = "";
             List<string> errors = new List<string>();
-            if (request.AvatarUrl != null)
-            {
-                fileName = await SaveImageFileAsync(request.AvatarUrl);
-            }
 
             var user = new User
             {
@@ -45,49 +41,47 @@ namespace PersonalBlogApp.Services
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "User");
+
+                if (request.AvatarUrl != null)
+                {
+                    fileName = await SaveImageFileAsync(request.AvatarUrl);
+                }
+
                 return new ApiResponse
                 {
                     Status = 201,
-                    Message = "Đăng ký thành công"
+                    Message = "Sign Up Successfully"
                 };
             }
             else
             {
                 foreach (var errorResult in result.Errors)
                 {
-                    errors.Add(errorResult.Description + "<br>");
+                    errors.Add(errorResult.Description);
                 }
                 return new ApiResponse
                 {
                     Status = 400,
-                    Message = string.Join("<br>", errors)
+                    //Message = string.Join("<br>", errors),
+                    Errors = errors
                 };
             }
         }
+
         public async Task<ApiResponse> Login(LoginRequest request)
         {
-            if(request.UserName == null || request.PasswordHash == null)
-            {
-                throw new ArgumentException("Không được để trống");
-            }
+            if (string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PasswordHash))
+                return new ApiResponse { Status = 400, Message = "Plese fill all of the input blank" };
 
-            var exstingUser = await _userManager.FindByNameAsync(request.UserName);
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user == null)
+                return new ApiResponse { Status = 400, Message = "User is not exist" };
 
-            if (exstingUser == null) {
-                throw new KeyNotFoundException("Không tồn tại user này");
-            }
+            var result = await _signInManager.PasswordSignInAsync(user, request.PasswordHash, false, false);
+            if (!result.Succeeded)
+                return new ApiResponse { Status = 400, Message = "Wrong password" };
 
-            var result = await _signInManager.PasswordSignInAsync(exstingUser, request.PasswordHash, isPersistent: false, lockoutOnFailure: false);
-
-            if (!result.Succeeded) {
-                throw new ArgumentException("Sai mật khẩu. Vui lòng nhập lại");
-            }
-
-            return new ApiResponse
-            {
-                Status = 200,
-                Message = "Đăng nhập thành công"
-            };
+            return new ApiResponse { Status = 200, Message = "Login successfully" };
         }
 
         public async Task<ApiResponse> Logout()
