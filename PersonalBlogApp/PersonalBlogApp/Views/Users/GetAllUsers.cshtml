@@ -6,9 +6,6 @@
 
 <h1>GetAllUsers</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table" class="d-flex align-items-center justify-content-center">
     <thead>
         <tr>
@@ -44,8 +41,8 @@
             </td>
             <td>
                 <div class="d-flex align-items-center justify-content-center">
-                    <button class="btn btn-primary mx-2" onlick="DetailUser(@item.Id)">Edit</button> 
-                    <butotn class="btn btn-danger" onlick="RemoveUser(@item.Id)">Remove</butotn>
+                    <a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.Id">Detail</a> 
+                    <a class="btn btn-danger mx-2" asp-controller="Users" asp-action="Delete" asp-route-id="@item.Id">Remove</a>
                 </div>
             </td>
         </tr>

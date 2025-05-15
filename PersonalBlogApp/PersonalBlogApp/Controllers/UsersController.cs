@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
+using PersonalBlogApp.Responses;
 using PersonalBlogApp.Services;
 
 namespace PersonalBlogApp.Controllers
@@ -19,73 +21,62 @@ namespace PersonalBlogApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers(string? message) // message to show noti when delete user
         {
             var getAllUsers = await _userService.GetAllAsync();
             return View(getAllUsers);
         }
 
-        // GET: UsersController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
-            return View();
+            var result = await _userService.GetByIdAsync(id);
+            return View(result);
         }
 
-        // POST: UsersController/Create
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var userModel = await _userService.GetByIdAsync(id);
+            return View(userModel);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Edit([FromForm] DetailUserResponse userRequest,List<string> rolesSelected)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var userModel = await _userService.GetByIdAsync(userRequest.User.Id);
+                return View(userModel);
             }
-            catch
+
+            var result = await _userService.UpdateAsync(userRequest.User,rolesSelected);
+            if(result.Status == 201)
             {
-                return View();
+                return RedirectToAction("Details", new { id = userRequest.User.Id });
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, result.Message);
+                //request.AllRoles = (await _userService.GetByIdAsync(request.User.Id)).AllRoles;
+
+                return View(userRequest); // Hoi anh Kai
             }
         }
 
-        // GET: UsersController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public async Task<ActionResult> Delete(string id)
         {
-            return View();
+            var result = await _userService.GetByIdAsync(id);
+            return View(result);
         }
 
-        // POST: UsersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> ConfirmDelete(string id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsersController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var result = await _userService.DeleteAsync(id);
+            return RedirectToAction("GetAllUsers");
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿@model PersonalBlogApp.Responses.DetailUserResponse;
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Users</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.AvatarUrl)
+        </dt>
+        <dd>
+            <img src="@Model.User.Avatar" alt="Avatar" style="width: 100px; height: 100px;" />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Roles)
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                foreach (var role in Model.User.Roles)
+                {
+                    <p>@role</p>
+                }
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.User.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
