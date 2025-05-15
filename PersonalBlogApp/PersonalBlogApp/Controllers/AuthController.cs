@@ -49,18 +49,14 @@ namespace PersonalBlogApp.Controllers
         {
             var result = await _authService.Login(request);
             if (result.Status != 200)
-            {
-    
-               ModelState.AddModelError(string.Empty, result);
-                
-                return View(request);
-
+            { 
+               ModelState.AddModelError(string.Empty, result.Message);              
+               return View(request);
             }
             return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Logout()
         {
             var result = await _authService.Logout();

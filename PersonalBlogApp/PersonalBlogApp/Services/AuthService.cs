@@ -65,43 +65,21 @@ namespace PersonalBlogApp.Services
                 };
             }
         }
+
         public async Task<ApiResponse> Login(LoginRequest request)
         {
-            string error = "";
-            if (request.UserName == null || request.PasswordHash == null)
-            {
-                error = "Không được để trống";
-            }
+            if (string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PasswordHash))
+                return new ApiResponse { Status = 400, Message = "Plese fill all of the input blank" };
 
-            var exstingUser = await _userManager.FindByNameAsync(request.UserName);
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user == null)
+                return new ApiResponse { Status = 400, Message = "User is not exist" };
 
-            if (exstingUser == null) {
-                error = "Không tồn tại user này";
-            }
+            var result = await _signInManager.PasswordSignInAsync(user, request.PasswordHash, false, false);
+            if (!result.Succeeded)
+                return new ApiResponse { Status = 400, Message = "Wrong password" };
 
-            var result = await _signInManager.PasswordSignInAsync(exstingUser, request.PasswordHash, isPersistent: false, lockoutOnFailure: false);
-
-            if (!result.Succeeded) {
-                error = "Sai mật khẩu. Vui lòng nhập lại";
-            }
-
-            if(error == null)
-            {
-                return new ApiResponse
-                {
-                    Status = 400,
-                    Message = error
-                };
-            }
-            else
-            {
-                return new ApiResponse
-                {
-                    Status = 200,
-                    Message = "Đăng nhập thành công"
-                };
-            }
-          
+            return new ApiResponse { Status = 200, Message = "Login successfully" };
         }
 
         public async Task<ApiResponse> Logout()
