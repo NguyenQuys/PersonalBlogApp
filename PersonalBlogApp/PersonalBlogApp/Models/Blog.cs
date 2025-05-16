@@ -4,14 +4,14 @@ namespace PersonalBlogApp.Models
 {
     public class Blog
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [MaxLength(100)]
         public string Title { get; set; }
 
         public string Content { get; set; }
 
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         public string UserId { get; set; }
 

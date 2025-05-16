@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Abstractions;
+using PersonalBlogApp.Requests;
 
 namespace PersonalBlogApp.Models
 {
@@ -30,5 +31,6 @@ namespace PersonalBlogApp.Models
             
             base.OnModelCreating(modelBuilder);
         }
+        public DbSet<PersonalBlogApp.Requests.BlogRequest> BlogRequest { get; set; } = default!;
     }
 }

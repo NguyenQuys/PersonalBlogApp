@@ -6,10 +6,10 @@ namespace PersonalBlogApp.Repositories
     public interface IGenericsRepository<T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task<string> CreateAsync(T entity);
-        Task<string> UpdateAsync(T entity);
-        Task<string> DeleteAsync(int id);
+        Task<T> GetByIdAsync(Guid id);
+        Task CreateAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(int id);
     }
 
     public class GenericsRepository<T> : IGenericsRepository<T> where T : class
@@ -29,33 +29,27 @@ namespace PersonalBlogApp.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
+        public async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
 
-        public virtual async Task<string> CreateAsync(T entity)
+        public async Task CreateAsync(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
-            return "Created";
         }
 
-        public virtual async Task<string> UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
-            return "Updated";
         }
 
-        public virtual async Task<string> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity == null) return "Not Found";
+            if (entity == null) 
 
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
-            return "Deleted";
         }
     }
 
