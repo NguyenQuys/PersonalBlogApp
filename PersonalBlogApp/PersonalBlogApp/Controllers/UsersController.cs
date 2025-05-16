@@ -11,6 +11,7 @@ using PersonalBlogApp.Services;
 
 namespace PersonalBlogApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
