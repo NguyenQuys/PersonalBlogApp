@@ -12,7 +12,6 @@
     <div class="col-md-4">
         <form asp-action="Edit" asp-controller="Users" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <input type="hidden" asp-for="User.Id" />
             <div class="form-group">
                 <label asp-for="User.UserName" class="control-label"></label>

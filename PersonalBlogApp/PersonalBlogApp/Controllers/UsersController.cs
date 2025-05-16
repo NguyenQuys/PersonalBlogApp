@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
@@ -44,23 +45,18 @@ namespace PersonalBlogApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([FromForm] DetailUserResponse userRequest,List<string> rolesSelected)
         {
-            if (!ModelState.IsValid)
-            {
-                var userModel = await _userService.GetByIdAsync(userRequest.User.Id);
-                return View(userModel);
-            }
-
             var result = await _userService.UpdateAsync(userRequest.User,rolesSelected);
             if(result.Status == 201)
             {
+                TempData["SuccessMessage"] = "User updated successfully";
                 return RedirectToAction("Details", new { id = userRequest.User.Id });
             }
             else
             {
                 ModelState.AddModelError(string.Empty, result.Message);
-                //request.AllRoles = (await _userService.GetByIdAsync(request.User.Id)).AllRoles;
+                var user = await _userService.GetByIdAsync(userRequest.User.Id);
 
-                return View(userRequest); // Hoi anh Kai
+                return View(user); 
             }
         }
 
@@ -76,6 +72,7 @@ namespace PersonalBlogApp.Controllers
         public async Task<ActionResult> ConfirmDelete(string id)
         {
             var result = await _userService.DeleteAsync(id);
+            TempData["SuccessMessage"] = "User deleted successfully";
             return RedirectToAction("GetAllUsers");
         }
     }

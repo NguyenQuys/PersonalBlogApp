@@ -11,7 +11,7 @@ namespace PersonalBlogApp.Services
     {
         Task<IEnumerable<User>> GetAllAsync();
         Task<DetailUserResponse> GetByIdAsync(string id);
-        Task<ApiResponse> UpdateAsync(UserBaseRequest entity,List<string> rolesSelected);
+        Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
         Task<string> DeleteAsync(string id);
     }
 
@@ -68,7 +68,7 @@ namespace PersonalBlogApp.Services
             };
         }
 
-        public async Task<ApiResponse> UpdateAsync(UserBaseRequest request, List<string> rolesSelected)
+        public async Task<ApiResponse> UpdateAsync(UserRequest request, List<string> rolesSelected)
         {
             var existingUser = await _userManager.FindByIdAsync(request.Id);
 
