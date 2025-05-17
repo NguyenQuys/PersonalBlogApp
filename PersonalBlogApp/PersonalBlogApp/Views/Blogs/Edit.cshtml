@@ -35,7 +35,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
+                <textarea id="content" asp-for="Content" rows="10" cols="80">
+                    Enter content...
+                </textarea>                
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -63,3 +65,7 @@
     <a asp-action="GetAll">Back to List</a>
 </div>
 
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<script>
+        CKEDITOR.replace('content');
+</script>

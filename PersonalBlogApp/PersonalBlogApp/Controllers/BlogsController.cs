@@ -7,6 +7,7 @@ using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Services;
 using System.Security.Claims;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace PersonalBlogApp.Controllers
 {
@@ -22,12 +23,8 @@ namespace PersonalBlogApp.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(string sortValue, int priority)
-       {
+        {
             var result = await _blogService.SortAndFilter(sortValue, priority);
-            //else
-            //{
-            //    result = await _blogService.GetByUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //}
             return View(result);
         }
 
