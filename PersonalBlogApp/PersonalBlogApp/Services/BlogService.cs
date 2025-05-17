@@ -8,9 +8,10 @@ namespace PersonalBlogApp.Services
 {
     public interface IBlogService : IGenericsService<Blog> {
 
-        Task<IEnumerable<Blog>> GetByUserId(string userId);
-        Task<string> CreateAsync(BlogRequest request);
-        Task<string> UpdateAsync(BlogRequest request);
+        //Task<IEnumerable<Blog>> GetByUserId(string userId);
+        Task<Blog> CreateAsync(BlogRequest request);
+        Task<Blog> UpdateAsync(BlogRequest request);
+        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue);
     }
 
     public class BlogService : IBlogService
@@ -24,7 +25,7 @@ namespace PersonalBlogApp.Services
             _userManager = userManager;
         }
 
-        public async Task<string> CreateAsync(BlogRequest request)
+        public async Task<Blog> CreateAsync(BlogRequest request)
         {
             var newBlog = new Blog
             {
@@ -34,26 +35,31 @@ namespace PersonalBlogApp.Services
                 Priority = request.Priority
             };
 
-            await _blogRepository.CreateAsync(newBlog);
-            return "Create blog successfully";
+            var result = await _blogRepository.CreateAsync(newBlog);
+            return result;
         }
 
-        public Task<string> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            await _blogRepository.DeleteAsync(id);
+            return "Delete blog successfully";
         }
 
         public async Task<IEnumerable<Blog>> GetAllAsync()
         {
             var result = await _blogRepository.GetAllAsync();
+            foreach (var user in result)
+            {
+                user.User = await _userManager.FindByIdAsync(user.UserId);
+            }
             return result;
         }
 
-        public async Task<IEnumerable<Blog>> GetByUserId(string userId)
-        {
-            var result = await _blogRepository.GetByUserId(userId);
-            return result;
-        }
+        //public async Task<IEnumerable<Blog>> GetByUserId(string userId)
+        //{
+        //    var result = await _blogRepository.GetByUserId(userId);
+        //    return result;
+        //}
 
         public async Task<Blog> GetByIdAsync(Guid id)
         {
@@ -66,12 +72,33 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-
-        public async Task<string> UpdateAsync(BlogRequest request)
+        public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int priorityValue)
         {
-                
-                var blogOwner = await _userManager.FindByIdAsync(request.UserId);
-            return "";
+            var result = await _blogRepository.SortAndFilter(sortValue, priorityValue);
+            return result;
+        }
+
+        public async Task<Blog> UpdateAsync(BlogRequest request)
+        {    
+            var blogOwner = await _userManager.FindByIdAsync(request.UserId);
+
+            if (!blogOwner.Id.Equals(request.UserId))
+            {
+                throw new Exception("You don't have permession to edit");
+            }
+
+            var blogToUpdate = new Blog
+            {
+                Id = (Guid)request.Id,
+                Title = request.Title,
+                Content = request.Content,
+                UserId = request.UserId,
+                User = await _userManager.FindByIdAsync(request.UserId),
+                Priority = request.Priority,
+            };
+
+            var result = await _blogRepository.UpdateAsync(blogToUpdate);
+            return result;
         }
     }
 }

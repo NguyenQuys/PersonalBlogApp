@@ -21,17 +21,13 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string sortValue, int priority)
        {
-            object result;
-            if (User.IsInRole("Admin"))
-            {
-                result = await _blogService.GetAllAsync();
-            }
-            else
-            {
-                result = await _blogService.GetByUserId(User.FindFirst(ClaimTypes.NameIdentifier).ToString());
-            }
+            var result = await _blogService.SortAndFilter(sortValue, priority);
+            //else
+            //{
+            //    result = await _blogService.GetByUserId(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //}
             return View(result);
         }
 
@@ -46,7 +42,7 @@ namespace PersonalBlogApp.Controllers
         public async Task<IActionResult> Create([FromForm] BlogRequest request)
         {
             var result = await _blogService.CreateAsync(request);
-            return View(result);
+            return RedirectToAction("Details", new { id = result.Id });
         }
 
         [HttpGet]
@@ -71,11 +67,45 @@ namespace PersonalBlogApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromForm] BlogRequest request)
         {
-            //var userRole = await User.FindFirst
-            //var result = await _blogService.UpdateAsync(request);
-            //return RedirectToAction("Edit", new {id = request.Id});
-            return View();
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return RedirectToAction("Edit", new { id = request.Id });
+                }
+
+                var result = await _blogService.UpdateAsync(request);
+                TempData["Success"] = "Edit blog successfully";
+                return RedirectToAction("Details", new { id = request.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Edit", new { id = request.Id });
+            }
         }
-  
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _blogService.GetByIdAsync(id);
+            return View(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmDelete(Guid id)
+        {
+            var result = await _blogService.DeleteAsync(id);
+            TempData["Success"] = result;
+            return RedirectToAction("GetAll");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortAndFilter(string sortValue,int priorityValue)
+        {
+            var result = await _blogService.SortAndFilter(sortValue, priorityValue);
+            return RedirectToAction("GetAll", new {sortValue = sortValue, priority  = priorityValue});
+        }
     }
 }

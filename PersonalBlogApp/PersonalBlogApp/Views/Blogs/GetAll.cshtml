@@ -1,62 +1,105 @@
 ﻿@model IEnumerable<PersonalBlogApp.Models.Blog>
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "GetAll";
+	ViewData["Title"] = "GetAll";
 }
-
 <h1>GetAll</h1>
-@if(@TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
+@{
+	var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+	if (@TempData["Error"] != null)
+	{
+		<div class="alert alert-danger">@TempData["Error"]</div>
+	}
+	else if (@TempData["Success"] != null)
+	{
+		<div class="alert alert-success">@TempData["Success"]</div>
+	}
 }
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="row">
+	<div class="col-6">
+		<p>
+			<a asp-action="Create">Create New</a>
+		</p>
+	</div>
+	<div class="col-6">
+		<form asp-action="SortAndFilter" method="post">
+			<label>Sort by</label>
+			<select name="sortValue">
+				<option value="newest">Newest</option>
+				<option value="oldest">Oldest</option>
+			</select>
+			<label>Priority</label>
+			<select name="priorityValue">
+				<option selected="">Choose</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<button type="submit">Filter</button>
+		</form>
+	</div>
+</div>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Priority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Priority)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Title)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Content)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.CreatedDate)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.User)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Priority)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Title)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Content)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.CreatedDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.User.UserName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Priority)
+				</td>
+				<td>
+					@{
+						if(item.UserId.Equals(currentUserId))
+						{
+							<a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a><span> |</span>
+						}
+					}
+					<a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+					@{
+						if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
+						{
+							<a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+						}
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

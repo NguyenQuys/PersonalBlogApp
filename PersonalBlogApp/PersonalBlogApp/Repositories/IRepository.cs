@@ -7,9 +7,9 @@ namespace PersonalBlogApp.Repositories
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(Guid id);
-        Task CreateAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
+        Task<T> CreateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
+        Task DeleteAsync(Guid id);
     }
 
     public class GenericsRepository<T> : IGenericsRepository<T> where T : class
@@ -31,23 +31,23 @@ namespace PersonalBlogApp.Repositories
 
         public async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
 
-        public async Task CreateAsync(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity == null) 
-
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
