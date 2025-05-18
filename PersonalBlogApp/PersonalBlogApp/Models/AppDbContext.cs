@@ -1,36 +1,47 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Abstractions;
-using PersonalBlogApp.Requests;
+using PersonalBlogApp.Models;
 
 namespace PersonalBlogApp.Models
 {
     public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            // Blog - User
             modelBuilder.Entity<Blog>()
                 .HasOne(b => b.User)
                 .WithMany(u => u.Blogs)
-                .HasForeignKey(b => b.UserId);
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Blog - comment
             modelBuilder.Entity<Comment>()
-                .HasOne(b=>b.Blog)
+                .HasOne(c=>c.Blog)
                 .WithMany(u => u.Comments)
-                .HasForeignKey(b => b.BlogId);
+                .HasForeignKey(c => c.BlogId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // User - cmt
             modelBuilder.Entity<Comment>()
-                .HasOne(u=>u.User)
-                .WithMany(c=>c.Comments)
-                .HasForeignKey(u => u.UserId)
-                .OnDelete(DeleteBehavior.Restrict); ;
-            
-            base.OnModelCreating(modelBuilder);
+                .HasOne(c=>c.User)
+                .WithMany(u=>u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Comment - Self (Parent - Replies)
+            modelBuilder.Entity<Comment>().
+                HasOne(r => r.Parent)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
-        public DbSet<PersonalBlogApp.Requests.BlogRequest> BlogRequest { get; set; } = default!;
     }
 }

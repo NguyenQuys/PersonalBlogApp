@@ -21,7 +21,6 @@ namespace PersonalBlogApp.Repositories
             if (!string.IsNullOrWhiteSpace(username))
                 query = query.Where(u => u.UserName.Contains(username));
 
- 
             return await query.ToListAsync();
         }
 
