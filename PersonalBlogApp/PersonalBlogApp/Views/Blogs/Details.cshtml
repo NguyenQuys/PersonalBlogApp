@@ -54,9 +54,26 @@ else if (TempData["Success"] != null)
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Comments)
         </dd>
-        <form asp-action="AddComment" asp-controller="Blogs" method="post">
-            <textarea name="comment" placeholder="Input comment"></textarea>
-            <input type="hidden" name="blogId" value="@Model.Id" />
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <ul class="list-group">
+                @foreach (var cmt in Model.Comments)
+                {
+                    <li class="list-group-item">
+                        <strong>@cmt.User?.UserName</strong>:
+                        @cmt.Content
+                        <span class="text-muted" style="float:right;">@cmt.CreatedDate.ToString("g")</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No comments yet.</p>
+        }
+        <form asp-action="Create" asp-controller="Comments" method="post">
+            <textarea name="Content" placeholder="Input comment"></textarea>
+            <input type="hidden" name="BlogId" value="@Model.Id" />
             <button type="submit" class="btn btn-primary">Submit Comment</button>
         </form>
 

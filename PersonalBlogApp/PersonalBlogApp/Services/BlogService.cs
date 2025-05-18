@@ -47,12 +47,7 @@ namespace PersonalBlogApp.Services
 
         public async Task<IEnumerable<Blog>> GetAllAsync()
         {
-            var result = await _blogRepository.GetAllAsync();
-            foreach (var user in result)
-            {
-                user.User = await _userManager.FindByIdAsync(user.UserId);
-            }
-            return result;
+            throw new Exception();
         }
 
         //public async Task<IEnumerable<Blog>> GetByUserId(string userId)
@@ -75,6 +70,10 @@ namespace PersonalBlogApp.Services
         public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int priorityValue)
         {
             var result = await _blogRepository.SortAndFilter(sortValue, priorityValue);
+            foreach (var user in result)
+            {
+                user.User = await _userManager.FindByIdAsync(user.UserId);
+            }
             return result;
         }
 
