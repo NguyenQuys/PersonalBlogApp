@@ -61,7 +61,7 @@ namespace PersonalBlogApp.Controllers
             var result = await _authService.Login(request);
             if (result.Status != 200)
             { 
-               ModelState.AddModelError(string.Empty, result.Message);              
+               ModelState.AddModelError(string.Empty, result.Result.ToString());              
                return View(request);
             }
             return RedirectToAction("Index", "Home");

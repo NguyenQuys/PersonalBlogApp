@@ -85,7 +85,7 @@ namespace PersonalBlogApp.Services
                 return new ApiResponse
                 {
                     Status = 400,
-                    Message = "Every user has at least one role"
+                    Result = "Every user has at least one role"
                 };
             }
 
@@ -102,7 +102,7 @@ namespace PersonalBlogApp.Services
                 return new ApiResponse
                 {
                     Status = 201,
-                    Message = "Update successfully"
+                    Result = "Update successfully"
                 };
             }
             else

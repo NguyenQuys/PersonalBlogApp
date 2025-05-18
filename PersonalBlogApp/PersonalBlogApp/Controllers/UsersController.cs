@@ -54,7 +54,7 @@ namespace PersonalBlogApp.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, result.Message);
+                ModelState.AddModelError(string.Empty, result.Result.ToString());
                 var user = await _userService.GetByIdAsync(userRequest.User.Id);
 
                 return View(user); 

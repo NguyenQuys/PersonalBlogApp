@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Versioning;
 using PersonalBlogApp.Models;
 
 namespace PersonalBlogApp.Repositories
 {
     public interface IBlogRepository : IGenericsRepository<Blog>
     {
-        Task<IEnumerable<Blog>> GetByUserId(string userId);
         Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue);
     }
 
@@ -15,17 +15,6 @@ namespace PersonalBlogApp.Repositories
         public BlogRepository(AppDbContext context) : base(context)
         {
         }
-
-        public async Task<IEnumerable<Blog>> GetByUserId(string userId) => await _dbSet.Where(m=>m.UserId.Equals(userId)).ToListAsync();
-
-        //public async Task<IEnumerable<Blog>> Sort(string sortValue)
-        //{
-        //    //if(sortValue == "newest")
-        //    //{
-        //    //    return await _dbSet.OrderByDescending(m=>m.CreatedDate).ToListAsync();
-        //    //}
-        //    //return await _dbSet.OrderBy(m=>m.CreatedDate).ToListAsync();
-        //}
 
         public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue)
         {
@@ -48,5 +37,11 @@ namespace PersonalBlogApp.Repositories
             return await query.ToListAsync();
         }
 
+        public override async Task<Blog> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.Include(m => m.Comments)
+                                .ThenInclude(m=>m.User)
+                                .FirstOrDefaultAsync(m => m.Id == id);
+        }
     }
 }

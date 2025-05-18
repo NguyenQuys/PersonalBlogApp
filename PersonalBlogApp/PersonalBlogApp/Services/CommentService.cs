@@ -2,12 +2,13 @@
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Repositories;
 using PersonalBlogApp.Requests;
+using PersonalBlogApp.Responses;
 
 namespace PersonalBlogApp.Services
 {
     public interface ICommentService 
     {
-        Task<Comment> Create(CommentRequest request);
+        Task<ApiResponse> Create(CommentRequest request);
         Task Delete(Guid id);
     }
 
@@ -22,7 +23,7 @@ namespace PersonalBlogApp.Services
             _userManager = userManager;
         }
 
-        public async Task<Comment> Create(CommentRequest request)
+        public async Task<ApiResponse> Create(CommentRequest request)
         {
             var newComment = new Comment
             {
@@ -32,7 +33,17 @@ namespace PersonalBlogApp.Services
             };
 
             var result = await _commentRepository.CreateAsync(newComment);
-            return result;
+
+            return new ApiResponse
+            {
+                Status = 201,
+                Result = new
+                {
+                    Content = newComment.Content,
+                    Username = result.User.UserName,
+                    createdDate = result.CreatedDate,
+                }
+            };
         }
 
         public Task Delete(Guid id)

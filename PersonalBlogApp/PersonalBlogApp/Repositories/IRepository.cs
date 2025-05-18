@@ -29,23 +29,23 @@ namespace PersonalBlogApp.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
+        public virtual async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
 
-        public async Task<T> CreateAsync(T entity)
+        public virtual async Task<T> CreateAsync(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
             _dbSet.Remove(entity);

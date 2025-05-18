@@ -50,7 +50,7 @@ namespace PersonalBlogApp.Services
                 return new ApiResponse
                 {
                     Status = 201,
-                    Message = "Sign Up Successfully"
+                    Result = "Sign Up Successfully"
                 };
             }
             else
@@ -71,17 +71,17 @@ namespace PersonalBlogApp.Services
         public async Task<ApiResponse> Login(LoginRequest request)
         {
             if (string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PasswordHash))
-                return new ApiResponse { Status = 400, Message = "Plese fill all of the input blank" };
+                return new ApiResponse { Status = 400, Result = "Plese fill all of the input blank" };
 
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
-                return new ApiResponse { Status = 400, Message = "User is not exist" };
+                return new ApiResponse { Status = 400, Result = "User is not exist" };
 
             var result = await _signInManager.PasswordSignInAsync(user, request.PasswordHash, false, false);
             if (!result.Succeeded)
-                return new ApiResponse { Status = 400, Message = "Wrong password" };
+                return new ApiResponse { Status = 400, Result = "Wrong password" };
 
-            return new ApiResponse { Status = 200, Message = "Login successfully" };
+            return new ApiResponse { Status = 200, Result = "Login successfully" };
         }
 
         public async Task<ApiResponse> Logout()
@@ -90,7 +90,7 @@ namespace PersonalBlogApp.Services
             return new ApiResponse
             {
                 Status = 200,
-                Message = "Đăng xuất thành công"
+                Result = "Logout successfully"
             };
         }
 
@@ -99,7 +99,7 @@ namespace PersonalBlogApp.Services
             return new ApiResponse
             {
                 Status = 401,
-                Message = "Bạn không có quyền truy cập vào chức năng này"
+                Result = "You don't have permission"
             };
         }
 
