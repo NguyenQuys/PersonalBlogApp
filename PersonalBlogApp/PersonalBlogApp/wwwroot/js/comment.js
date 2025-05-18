@@ -34,3 +34,11 @@
         console.error('Error:', error);
     }
 }
+
+async function OpenReplyInput(parentCommentId, cmtContentParent) {
+
+    const input = document.createElement('input');
+    input.placeholder = "Reply to " + cmtContentParent;
+
+    document.getElementById('reply-comment').appendChild(input);
+}

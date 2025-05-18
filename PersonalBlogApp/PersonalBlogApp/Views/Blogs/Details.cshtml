@@ -66,20 +66,21 @@ else if (TempData["Success"] != null)
                                     @cmt.Content
                                     <span class="text-muted" style="float:right;">@cmt.CreatedDate.ToString()</span>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-3 d-flex">
                                     @if (cmt.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
                                     {
-                                        //<a class="btn btn-danger" name="" asp-action="Delete" asp-route-id="@cmt.Id">Delete</a>
                                         <form asp-action="Delete" asp-controller="Comments" method="post">
                                             <input type="hidden" name="blogId" value="@Model.Id" />                                            <input type="hidden" name="blogId" value="@Model.Id" />
                                             <input type="hidden" name="commentId" value="@cmt.Id" />
                                             <button type="submit" class="btn btn-danger">Delete</button>
                                         </form>
+                                        <span class="mx-3"> </span>
                                     }
+                                    <button type="button" onclick="OpenReplyInput('@cmt.Id', '@cmt.Content')" class="btn btn-primary">Reply</button>
                                 </div>
                             </div>
                         </li>
-                       
+                        <div id="reply-comment"></div>
                     }
                 </ul>
             }
