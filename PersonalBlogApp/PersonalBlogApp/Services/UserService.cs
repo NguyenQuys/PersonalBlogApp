@@ -13,6 +13,7 @@ namespace PersonalBlogApp.Services
         Task<DetailUserResponse> GetByIdAsync(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
         Task<string> DeleteAsync(string id);
+        Task CheckActiveUser();
     }
 
     public class UserService : IUserService
@@ -26,6 +27,20 @@ namespace PersonalBlogApp.Services
             _userRepository = userRepository;
             _userManager = userManager;
             _roleManager = roleManager;
+        }
+
+        public async Task CheckActiveUser()
+        {
+            var usersToUnlock = await _userManager.Users
+                .Where(user => user.LockoutEnd != null && user.LockoutEnd <= DateTimeOffset.UtcNow)
+                .ToListAsync();
+
+            foreach (var user in usersToUnlock)
+            {
+                user.LockoutEnd = null;
+
+                await _userManager.UpdateAsync(user);
+            }
         }
 
         public async Task<string> DeleteAsync(string id)
@@ -45,6 +60,7 @@ namespace PersonalBlogApp.Services
         public async Task<DetailUserResponse> GetByIdAsync(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
+            var active = existingUser.LockoutEnd != null ? 1 : 0;
             if (existingUser == null)
             {
                 throw new Exception("User not found");
@@ -57,7 +73,8 @@ namespace PersonalBlogApp.Services
                 UserName = existingUser.UserName,
                 Email = existingUser.Email,
                 Avatar = existingUser.AvatarUrl,
-                Roles = roles
+                Roles = roles,
+                LockoutTime = active
             };
 
             return new DetailUserResponse
@@ -80,7 +97,16 @@ namespace PersonalBlogApp.Services
                 existingUser.AvatarUrl = avatarFileName;
             }
 
-            if(rolesSelected.Count == 0)
+            if(request.LockoutTime != null)
+            {
+                existingUser.LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(request.LockoutTime.Value);
+            }
+            else
+            {
+                existingUser.LockoutEnd = null;
+            }
+
+            if (rolesSelected.Count == 0)
             {
                 return new ApiResponse
                 {

@@ -51,6 +51,15 @@
                 }
             }
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.LockoutTime)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.User.LockoutTime == 0 ? "Active" : "Blocked")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.User.UserName)
+        </dt>
     </dl>
 </div>
 <div>

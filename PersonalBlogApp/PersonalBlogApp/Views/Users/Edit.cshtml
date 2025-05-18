@@ -30,6 +30,17 @@
                 <input type="file" asp-for="User.AvatarUrl" class="form-control" />
                 <span asp-validation-for="User.AvatarUrl" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="User.LockoutTime" class="control-label"></label>
+                <select asp-for="User.LockoutTime" class="control-label">
+                    <option value="" disabled>Choose time</option>
+                    <option value="">Unblock</option>
+                    <option value=1>1 muinute</option>
+                    <option value=10>10 minutes</option>
+                    <option value=30>30 minutes</option>
+                </select>
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
         
             <div class="form-group">
                 <label class="control-label">Roles</label>

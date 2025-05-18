@@ -26,5 +26,14 @@ namespace PersonalBlogApp.Controllers
             var result = await _commentService.Create(request);
             return Json(result);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid commentId, Guid blogId)
+        {
+            var result = await _commentService.Delete(commentId);
+            TempData["Success"] = result;
+            return RedirectToAction("Details","Blogs", new { id = blogId });
+        }
     }
 }

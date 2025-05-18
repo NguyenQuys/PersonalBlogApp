@@ -9,7 +9,7 @@ namespace PersonalBlogApp.Services
     public interface ICommentService 
     {
         Task<ApiResponse> Create(CommentRequest request);
-        Task Delete(Guid id);
+        Task<string> Delete(Guid id);
     }
 
     public class CommentService : ICommentService
@@ -46,9 +46,10 @@ namespace PersonalBlogApp.Services
             };
         }
 
-        public Task Delete(Guid id)
+        public async Task<string> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            await _commentRepository.DeleteAsync(id);
+            return "Delete comment successfully";
         }
     }
 }

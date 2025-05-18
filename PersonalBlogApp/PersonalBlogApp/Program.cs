@@ -72,7 +72,9 @@ if (!app.Environment.IsDevelopment())
 //    await CreateRoles(services);
 //}
 
+// Custom Middleware 
 app.UseExceptionHandling();
+//
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

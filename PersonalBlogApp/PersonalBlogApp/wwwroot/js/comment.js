@@ -14,7 +14,7 @@
 
         const result = await response.json();
         if (result.status === 201) {
-            // Build the new comment HTML
+
             const userName = "You";
             const commentContent = result.result.content;
             const createdDate = new Date(result.result.createdDate).toLocaleString();
@@ -26,7 +26,6 @@
 
             document.getElementById('comment-list').appendChild(li);
 
-            // Clear the input
             document.getElementById('comment-input').value = '';
         } else {
             console.log('Failed to add comment: ' + (result.message || 'Unknown error'));

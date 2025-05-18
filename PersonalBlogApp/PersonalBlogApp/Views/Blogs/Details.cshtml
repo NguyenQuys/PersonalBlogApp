@@ -1,7 +1,9 @@
 ﻿@model PersonalBlogApp.Models.Blog
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Detail";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 <h1>Detail</h1>
@@ -58,10 +60,26 @@ else if (TempData["Success"] != null)
                     @foreach (var cmt in Model.Comments)
                     {
                         <li class="list-group-item">
-                            <strong class="username-response">@cmt.User.UserName</strong>:
-                            @cmt.Content
-                            <span class="text-muted" style="float:right;">@cmt.CreatedDate.ToString()</span>
+                            <div class="row">
+                                <div class="col-9">
+                                    <strong class="username-response">@cmt.User.UserName</strong>:
+                                    @cmt.Content
+                                    <span class="text-muted" style="float:right;">@cmt.CreatedDate.ToString()</span>
+                                </div>
+                                <div class="col-3">
+                                    @if (cmt.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
+                                    {
+                                        //<a class="btn btn-danger" name="" asp-action="Delete" asp-route-id="@cmt.Id">Delete</a>
+                                        <form asp-action="Delete" asp-controller="Comments" method="post">
+                                            <input type="hidden" name="blogId" value="@Model.Id" />                                            <input type="hidden" name="blogId" value="@Model.Id" />
+                                            <input type="hidden" name="commentId" value="@cmt.Id" />
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
                         </li>
+                       
                     }
                 </ul>
             }
@@ -71,11 +89,6 @@ else if (TempData["Success"] != null)
             }
         </dd>
         
-        @* <form asp-action="Create" asp-controller="Comments" method="post">
-            <textarea name="Content" placeholder="Input comment"></textarea>
-            <input type="hidden" name="BlogId" value="@Model.Id" />
-            <button type="submit" class="btn btn-primary">Submit Comment</button>
-        </form> *@
         <form id="comment-form">
             <textarea name="Content" id="comment-input" placeholder="Input comment"></textarea>
             <input type="hidden" name="BlogId" id="blog-id" value="@Model.Id" />
