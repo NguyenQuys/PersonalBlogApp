@@ -1,57 +1,79 @@
 ﻿@model IEnumerable<PersonalBlogApp.Models.User>
 
 @{
-    ViewData["Title"] = "GetAllUsers";
+	ViewData["Title"] = "GetAllUsers";
 }
 
 <h1>GetAllUsers</h1>
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
+	<div class="alert alert-success">
+		@TempData["SuccessMessage"]
+	</div>
 }
 
+<div class="row">
+	<div class="col-8">
+		<form asp-action="SearchByUsername" class="mb-3" method="post">
+			<div class="input-group">
+				<input type="text" name="username" class="form-control" placeholder="Input username to search...">
+				<button class="btn btn-primary" type="submit">Search</button>
+			</div>
+		</form>
+	</div>
+	<div>
+		<form method="post" asp-action="FilterByRole">
+			<select name="roleValue" class="form-select" onchange="this.form.submit()">
+				<option disabled selected>Choose role</option>
+				<option value="admin">Admin</option>
+				<option value="user">User</option>
+			</select>
+		</form>
+
+	</div>
+</div>
+
 <table class="table" class="d-flex align-items-center justify-content-center">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AvatarUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                    <img src="@item.AvatarUrl" width="70%"/>
-            </td>
-            <td>
-                <div class="d-flex align-items-center justify-content-center">
-                    <a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.Id">Detail</a> 
-                    <a class="btn btn-danger mx-2" asp-controller="Users" asp-action="Delete" asp-route-id="@item.Id">Remove</a>
-                </div>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.UserName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Email)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.AvatarUrl)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.UserName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Email)
+				</td>
+				<td>
+					<img src="@item.AvatarUrl" width="70%" />
+				</td>
+				<td>
+					<div class="d-flex align-items-center justify-content-center">
+						<a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.Id">Detail</a>
+						<a class="btn btn-danger mx-2" asp-controller="Users" asp-action="Delete" asp-route-id="@item.Id">Remove</a>
+					</div>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

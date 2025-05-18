@@ -9,11 +9,10 @@ namespace PersonalBlogApp.Services
 {
     public interface IUserService 
     {
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue);
         Task<DetailUserResponse> GetByIdAsync(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
         Task<string> DeleteAsync(string id);
-        Task CheckActiveUser();
     }
 
     public class UserService : IUserService
@@ -29,20 +28,6 @@ namespace PersonalBlogApp.Services
             _roleManager = roleManager;
         }
 
-        public async Task CheckActiveUser()
-        {
-            var usersToUnlock = await _userManager.Users
-                .Where(user => user.LockoutEnd != null && user.LockoutEnd <= DateTimeOffset.UtcNow)
-                .ToListAsync();
-
-            foreach (var user in usersToUnlock)
-            {
-                user.LockoutEnd = null;
-
-                await _userManager.UpdateAsync(user);
-            }
-        }
-
         public async Task<string> DeleteAsync(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
@@ -51,11 +36,36 @@ namespace PersonalBlogApp.Services
             return "Delete successfully";
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue)
         {
-            var result = await _userRepository.GetAllAsync();
-            return result;
+            var users = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                users = users.Where(u => u.UserName.Contains(username));
+            }
+
+            var userList = await users.ToListAsync();
+
+            if (!string.IsNullOrEmpty(roleValue))
+            {
+                var filteredUsers = new List<User>();
+                foreach (var user in userList)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains(roleValue, StringComparer.OrdinalIgnoreCase))
+                    {
+                        filteredUsers.Add(user);
+                    }
+                }
+                return filteredUsers;
+            }
+            else
+            {
+                return userList;
+            }
         }
+
 
         public async Task<DetailUserResponse> GetByIdAsync(string id)
         {

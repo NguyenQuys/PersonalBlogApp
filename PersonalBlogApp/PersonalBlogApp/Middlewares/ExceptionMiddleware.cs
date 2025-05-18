@@ -19,7 +19,7 @@ namespace PersonalBlogApp.Middlewares
         {
             try
             {
-                await _next(context); // Gọi Middleware tiếp theo hoặc Controller
+                await _next(context); 
             }
             catch (Exception ex)
             {

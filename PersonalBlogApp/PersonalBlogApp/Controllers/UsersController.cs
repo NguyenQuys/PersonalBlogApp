@@ -23,9 +23,9 @@ namespace PersonalBlogApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllUsers(string? message) // message to show noti when delete user
+        public async Task<IActionResult> GetAllUsers(string? username, string? roleValue) // send params form search and filter 
         {
-            var getAllUsers = await _userService.GetAllAsync();
+            var getAllUsers = await _userService.GetAllAsync(username, roleValue);
             return View(getAllUsers);
         }
 
@@ -75,6 +75,18 @@ namespace PersonalBlogApp.Controllers
             var result = await _userService.DeleteAsync(id);
             TempData["SuccessMessage"] = "User deleted successfully";
             return RedirectToAction("GetAllUsers");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchByUsername([FromForm] string username)
+        {
+            return RedirectToAction("GetAllUsers", new { username });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FilterByRole([FromForm] string roleValue)
+        {
+            return RedirectToAction("GetAllUsers", new {  roleValue });
         }
     }
 }

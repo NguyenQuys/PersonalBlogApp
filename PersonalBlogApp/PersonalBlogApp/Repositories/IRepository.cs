@@ -5,7 +5,6 @@ namespace PersonalBlogApp.Repositories
 {
     public interface IGenericsRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(Guid id);
         Task<T> CreateAsync(T entity);
         Task<T> UpdateAsync(T entity);
@@ -21,12 +20,6 @@ namespace PersonalBlogApp.Repositories
         {
             _context = context;
             _dbSet = context.Set<T>();
-        }
-
-        public virtual async Task<IEnumerable<T>> GetAllAsync()
-        {
-            Console.WriteLine($"T is {typeof(T).Name}");
-            return await _dbSet.ToListAsync();
         }
 
         public virtual async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
