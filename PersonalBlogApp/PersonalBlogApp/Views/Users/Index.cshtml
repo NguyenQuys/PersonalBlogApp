@@ -14,7 +14,7 @@
 
 <div class="row">
 	<div class="col-8">
-		<form asp-action="SearchByUsername" class="mb-3" method="post">
+		<form asp-action="Index" class="mb-3" method="get">
 			<div class="input-group">
 				<input type="text" name="username" class="form-control" placeholder="Input username to search...">
 				<button class="btn btn-primary" type="submit">Search</button>
@@ -22,7 +22,7 @@
 		</form>
 	</div>
 	<div>
-		<form method="post" asp-action="FilterByRole">
+		<form method="get" asp-action="Index">
 			<select name="roleValue" class="form-select" onchange="this.form.submit()">
 				<option disabled selected>Choose role</option>
 				<option value="admin">Admin</option>
@@ -70,10 +70,11 @@
 				<td>
 					<div class="d-flex align-items-center justify-content-center">
 						<a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.Id">Detail</a>
-						<a class="btn btn-danger mx-2" asp-controller="Users" asp-action="Delete" asp-route-id="@item.Id">Remove</a>
+						<a class="btn btn-danger mx-2" onclick="DeleteUser('@item.Id')" asp-route-id="@item.Id">Remove</a>
 					</div>
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
+<script src="~/js//user.js" asp-append-version="true"></script>

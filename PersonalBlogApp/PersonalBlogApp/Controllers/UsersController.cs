@@ -8,6 +8,7 @@ using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
 using PersonalBlogApp.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PersonalBlogApp.Controllers
 {
@@ -23,12 +24,13 @@ namespace PersonalBlogApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllUsers(string? username, string? roleValue) // send params form search and filter 
+        public async Task<IActionResult> Index(string username, string roleValue) // send params form search and filter 
         {
             var getAllUsers = await _userService.GetAllAsync(username, roleValue);
             return View(getAllUsers);
         }
 
+        [HttpGet("Users/{id}")]
         public async Task<IActionResult> Details(string id)
         {
             var result = await _userService.GetByIdAsync(id);
@@ -54,39 +56,25 @@ namespace PersonalBlogApp.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, result.Result.ToString());
+                if (result.Result is IEnumerable<string> errors)
+                {
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error);
+                    }
+                }
+
                 var user = await _userService.GetByIdAsync(userRequest.User.Id);
 
                 return View(user); 
             }
         }
 
-        [HttpGet]
+        [HttpDelete("Users/{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            var result = await _userService.GetByIdAsync(id);
-            return View(result);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmDelete(string id)
-        {
             var result = await _userService.DeleteAsync(id);
-            TempData["SuccessMessage"] = "User deleted successfully";
-            return RedirectToAction("GetAllUsers");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SearchByUsername([FromForm] string username)
-        {
-            return RedirectToAction("GetAllUsers", new { username });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FilterByRole([FromForm] string roleValue)
-        {
-            return RedirectToAction("GetAllUsers", new {  roleValue });
+            return Json(result);
         }
     }
 }

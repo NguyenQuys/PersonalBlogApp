@@ -21,28 +21,32 @@ namespace PersonalBlogApp.Controllers
             _blogService = blogService;
         }
 
+        // get all blogs
         [HttpGet]
-        public async Task<IActionResult> GetAll(string sortValue, int priority)
+        public async Task<IActionResult> Index(string sortValue, int priorityValue)
         {
-            var result = await _blogService.SortAndFilter(sortValue, priority);
+            var result = await _blogService.SortAndFilter(sortValue, priorityValue);
             return View(result);
         }
 
+        // go to add blog view
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             return View();
         }
 
+        // add blog
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] BlogRequest request)
+        public async Task<IActionResult> Index([FromForm] BlogRequest request)
         {
             var result = await _blogService.CreateAsync(request);
             return RedirectToAction("Details", new { id = result.Id });
         }
 
-        [HttpGet]
+        // get detail
+        [HttpGet("Blogs/{id:guid}")]
         public async Task<IActionResult> Details(Guid id)
         {
             var result = await _blogService.GetByIdAsync(id);
@@ -82,27 +86,11 @@ namespace PersonalBlogApp.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpDelete("Blogs/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _blogService.GetByIdAsync(id);
-            return View(result);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmDelete(Guid id)
-        {
             var result = await _blogService.DeleteAsync(id);
-            TempData["Success"] = result;
-            return RedirectToAction("GetAll");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SortAndFilter(string sortValue,int priorityValue)
-        {
-            var result = await _blogService.SortAndFilter(sortValue, priorityValue);
-            return RedirectToAction("GetAll", new {sortValue = sortValue, priority  = priorityValue});
+            return Json(result);
         }
     }
 }

@@ -24,9 +24,10 @@
 		</p>
 	</div>
 	<div class="col-6">
-		<form asp-action="SortAndFilter" method="post">
+		<form asp-action="Index" method="get">
 			<label>Sort by</label>
 			<select name="sortValue">
+				<option selected="" disabled>Choose</option>
 				<option value="newest">Newest</option>
 				<option value="oldest">Oldest</option>
 			</select>
@@ -85,17 +86,18 @@
 				</td>
 				<td>
 					@{
-						if(item.UserId.Equals(currentUserId))
+						if (item.UserId.Equals(currentUserId))
 						{
-							<a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a><span> |</span>
+							<a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+
+							<span> |</span>
 						}
 					}
 					<a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">Details</a> |
 					@{
 						if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
 						{
-							<a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-
+							<a class="btn btn-danger" onclick=DeleteBlog('@item.Id')>Delete</a>
 						}
 					}
 				</td>
@@ -103,3 +105,4 @@
 		}
 	</tbody>
 </table>
+<script src="/js/blog.js" asp-append-version="true"></script>

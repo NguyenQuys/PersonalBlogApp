@@ -39,6 +39,8 @@ namespace PersonalBlogApp.Services
                 Status = 201,
                 Result = new
                 {
+                    Id = newComment.Id,
+                    BlogId = result.BlogId,
                     Content = newComment.Content,
                     Username = result.User.UserName,
                     createdDate = result.CreatedDate,

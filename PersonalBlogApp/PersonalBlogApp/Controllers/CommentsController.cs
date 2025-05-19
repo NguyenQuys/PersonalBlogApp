@@ -17,7 +17,7 @@ namespace PersonalBlogApp.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost]
+        [HttpPost("Comments/")]
         public async Task<IActionResult> Create([FromForm] CommentRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -28,12 +28,13 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid commentId, Guid blogId)
         {
             var result = await _commentService.Delete(commentId);
             TempData["Success"] = result;
             return RedirectToAction("Details","Blogs", new { id = blogId });
         }
+
+        
     }
 }

@@ -5,30 +5,35 @@
 }
 
 <h1>Edit</h1>
-
+@{
+    if (TempData["Error"] != null)
+    {
+        <div class="text-danger">
+            @TempData["Error"]
+        </div>
+    }
+}
 <h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <form asp-action="Edit" asp-controller="Users" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="User.Id" />
             <div class="form-group">
                 <label asp-for="User.UserName" class="control-label"></label>
                 <input asp-for="User.UserName" class="form-control" />
-                <span asp-validation-for="User.UserName" class="text-danger"></span>
             </div>
-     
+
             <div class="form-group">
                 <label asp-for="User.Email" class="control-label"></label>
                 <input type="email" asp-for="User.Email" class="form-control" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="User.AvatarUrl" class="control-label"></label>
                 <img src="@Model.User.Avatar" alt="Avatar" style="width: 100px; height: 100px;" />
                 <input type="file" asp-for="User.AvatarUrl" class="form-control" />
-                <span asp-validation-for="User.AvatarUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="User.LockoutTime" class="control-label"></label>
@@ -39,25 +44,23 @@
                     <option value=10>10 minutes</option>
                     <option value=30>30 minutes</option>
                 </select>
-                <span asp-validation-for="User.Email" class="text-danger"></span>
             </div>
-        
+
             <div class="form-group">
                 <label class="control-label">Roles</label>
                 @foreach (var role in Model.AllRoles)
                 {
                     <div class="form-check">
                         <input type="checkbox"
-                               class="form-check-input"
-                               name="rolesSelected"
-                               value="@role"
+                        class="form-check-input"
+                        name="rolesSelected"
+                        value="@role"
                         @(Model.User.Roles.Contains(role) ? "checked" : "") />
                         <label class="form-check-label">@role</label>
                     </div>
                 }
                 <span asp-validation-for="User.Roles" class="text-danger"></span>
             </div>
-
             <button class="btn btn-primary" type="submit">Save</button>
         </form>
     </div>

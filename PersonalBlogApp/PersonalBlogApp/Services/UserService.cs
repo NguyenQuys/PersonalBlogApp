@@ -97,6 +97,15 @@ namespace PersonalBlogApp.Services
 
         public async Task<ApiResponse> UpdateAsync(UserRequest request, List<string> rolesSelected)
         {
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return new ApiResponse
+                {
+                    Status = 400,
+                    Result = new List<string> { "Email is required." }
+                };
+            }
+
             var existingUser = await _userManager.FindByIdAsync(request.Id);
 
             existingUser.UserName = request.UserName;
@@ -107,29 +116,31 @@ namespace PersonalBlogApp.Services
                 existingUser.AvatarUrl = avatarFileName;
             }
 
-            if(request.LockoutTime != null)
-            {
+            if (request.LockoutTime != null)
                 existingUser.LockoutEnd = DateTimeOffset.UtcNow.AddMinutes(request.LockoutTime.Value);
-            }
             else
-            {
                 existingUser.LockoutEnd = null;
-            }
 
             if (rolesSelected.Count == 0)
             {
                 return new ApiResponse
                 {
                     Status = 400,
-                    Result = "Every user has at least one role"
+                    Result = new List<string> { "Every user has at least one role" }
                 };
             }
 
             var currentRoles = await _userManager.GetRolesAsync(existingUser);
+            var rolesToAdd = rolesSelected.Except(currentRoles).ToList();
+            var rolesToRemove = currentRoles.Except(rolesSelected).ToList();
 
-            var removeResult = await _userManager.RemoveFromRolesAsync(existingUser, currentRoles);
+            var removeResult = IdentityResult.Success;
+            if (rolesToRemove.Any())
+                removeResult = await _userManager.RemoveFromRolesAsync(existingUser, rolesToRemove);
 
-            var addResult = await _userManager.AddToRolesAsync(existingUser, rolesSelected);
+            var addResult = IdentityResult.Success;
+            if (rolesToAdd.Any())
+                addResult = await _userManager.AddToRolesAsync(existingUser, rolesToAdd);
 
             var updateResult = await _userManager.UpdateAsync(existingUser);
 
@@ -143,10 +154,17 @@ namespace PersonalBlogApp.Services
             }
             else
             {
-                var errors = updateResult.Errors.Select(e => e.Description).ToList();
-                errors.AddRange(addResult.Errors.Select(e => e.Description));
-                errors.AddRange(removeResult.Errors.Select(e => e.Description));
-                throw new Exception(string.Join(", ", errors));
+                var errors = updateResult.Errors.Select(e => e.Description)
+                    .Concat(addResult.Errors.Select(e => e.Description))
+                    .Concat(removeResult.Errors.Select(e => e.Description))
+                    .Distinct()
+                    .ToList();
+
+                return new ApiResponse
+                {
+                    Status = 400,
+                    Result = errors
+                };
             }
         }
 

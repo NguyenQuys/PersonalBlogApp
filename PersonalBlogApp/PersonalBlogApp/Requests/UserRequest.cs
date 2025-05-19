@@ -7,7 +7,11 @@ namespace PersonalBlogApp.Requests
     {
         public string PasswordHash { get; set; }
         public string? Id { get; set; }
+
+        [Required(ErrorMessage = "Username is not empty")]
         public string UserName { get; set; }
+
+        [Required(ErrorMessage = "Email is not empty")]
         public string Email { get; set; }
         public string? Avatar { get; set; }
 
