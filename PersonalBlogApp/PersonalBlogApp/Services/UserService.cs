@@ -10,7 +10,7 @@ namespace PersonalBlogApp.Services
     public interface IUserService 
     {
         Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue);
-        Task<DetailUserResponse> GetByIdAsync(string id);
+        Task<DetailUserResponse> GetUser(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
         Task<string> DeleteAsync(string id);
     }
@@ -66,8 +66,7 @@ namespace PersonalBlogApp.Services
             }
         }
 
-
-        public async Task<DetailUserResponse> GetByIdAsync(string id)
+        public async Task<DetailUserResponse> GetUser(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
             var active = existingUser.LockoutEnd != null ? 1 : 0;

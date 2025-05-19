@@ -23,7 +23,7 @@ async function AddComment() {
 
             const li = document.createElement('li');
             li.className = 'list-group-item';
-
+            li.id = `comment-${result.result.id}`
             li.innerHTML = `<div class="row">
                                 <div class="col-9">
                                     <strong class="username-response">${userName}</strong>: ${commentContent}
@@ -40,10 +40,6 @@ async function AddComment() {
                                 </div>
                             </div>
                             `
-
-            document.getElementById('comment-list').appendChild(li);
-
-            document.getElementById('comment-input').value = '';
 
             document.getElementById('comment-list').appendChild(li);
 
@@ -69,6 +65,7 @@ async function OpenReplyInput(parentCommentId, cmtContentParent) {
     divInput.innerHTML = `
         <input type="text" class="form-control" placeholder="Reply to ${cmtContentParent}..." id="reply-input">
         <button class="btn btn-primary" type="button" onclick="SendReply('${parentCommentId}')">Send</button>
+
     `;
 
     document.getElementById('comment-reply').appendChild(divInput);
@@ -89,26 +86,40 @@ async function SendReply(parentCommentId) {
     });
 
     if (response.ok) {
-        const result = response.json();
+        const result = await response.json()
+        const createdDate = new Date(result.result.createdDate).toLocaleString();
+
+        let replyList = document.getElementById(`reply-list-${parentCommentId}`);
+
+        if (!replyList) {
+            replyList = document.createElement('ul');
+            replyList.className = 'list-group mt-2 ms-4';
+            replyList.id = `reply-list-${parentCommentId}`;
+
+            const parentCommentElement = document.getElementById(`comment-${parentCommentId}`);
+            parentCommentElement.appendChild(replyList);
+        }
 
         const li = document.createElement('li');
         li.className = 'list-group-item';
         li.innerHTML = `
-                        <div>
-                            <strong class="username-response">${result.result.username}</strong>: ${result.result.content}
-                            <span class="text-muted" style="float:right;">${result.result.createdDate}</span>
-                            
-                        </div>
-                        `
+            <div>
+                <strong class="username-response">${result.result.username}</strong>: ${result.result.content}
+                <form method='post' class='d-inline' action='/Comments/Delete'>
+                    <input type='hidden' name='blogId' value='${result.result.blogId}'>
+                    <input type='hidden' name='commentId' value='${result.result.id}'>
+                    <button type='submit' style='float:right' class='btn btn-danger btn-sm ms-4'>Delete</button>
+                </form>
+                <span class="text-muted" style="float:right;">${createdDate}</span>
+            </div>
+        `;
+        replyList.appendChild(li);
+
+        // delete after send reply
+        const inputDiv = document.getElementById('active-reply-input');
+        if (inputDiv) inputDiv.remove();
     }
-
-
-    //const replyContent = document.getElementById('reply-input').value;
-    ////const response = await fetch('/Comments',)
-    //console.log(`Reply to comment ${parentCommentId}: ${replyContent}`);
-    //// Remove input after sending
-    //const inputDiv = document.getElementById('active-reply-input');
-    //if (inputDiv) inputDiv.remove();
 }
+
 
 

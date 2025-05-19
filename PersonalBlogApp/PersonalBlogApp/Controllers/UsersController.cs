@@ -22,9 +22,9 @@ namespace PersonalBlogApp.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet("Users")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index(string username, string roleValue) // send params form search and filter 
+        public async Task<IActionResult> Users(string username, string roleValue) // send params form search and filter 
         {
             var getAllUsers = await _userService.GetAllAsync(username, roleValue);
             return View(getAllUsers);
@@ -33,14 +33,14 @@ namespace PersonalBlogApp.Controllers
         [HttpGet("Users/{id}")]
         public async Task<IActionResult> Details(string id)
         {
-            var result = await _userService.GetByIdAsync(id);
+            var result = await _userService.GetUser(id);
             return View(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var userModel = await _userService.GetByIdAsync(id);
+            var userModel = await _userService.GetUser(id);
             return View(userModel);
         }
 
@@ -64,7 +64,7 @@ namespace PersonalBlogApp.Controllers
                     }
                 }
 
-                var user = await _userService.GetByIdAsync(userRequest.User.Id);
+                var user = await _userService.GetUser(userRequest.User.Id);
 
                 return View(user); 
             }

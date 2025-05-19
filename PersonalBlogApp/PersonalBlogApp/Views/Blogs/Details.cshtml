@@ -59,7 +59,7 @@ else if (TempData["Success"] != null)
                 <ul class="list-group" id="comment-list">
                     @foreach (var cmt in Model.Comments.Where(c => c.ParentId == null))
                     {
-                        <li class="list-group-item">
+                        <li class="list-group-item" id="comment-@cmt.Id">
                             <div class="row">
                                 <div class="col-9">
                                     <strong class="username-response">@cmt.User?.UserName</strong>:
@@ -82,29 +82,31 @@ else if (TempData["Success"] != null)
                             @{
                                 var replies = Model.Comments.Where(r => r.ParentId == cmt.Id).ToList();
                             }
+
+                            <ul class="list-group mt-2 ms-4" id="reply-list-@cmt.Id">
+
                             @if (replies.Any())
                             {
-                                <ul class="list-group mt-2 ms-4" id="reply-list">
                                     @foreach (var reply in replies)
                                     {
                                         <li class="list-group-item">
                                             <div>
                                                 <strong class="username-response">@reply.User?.UserName</strong>:
                                                 @reply.Content
-                                                <span class="text-muted" style="float:right;">@reply.CreatedDate.ToString()</span>
                                                 @if (reply.UserId == currentUserId || User.IsInRole("Admin"))
                                                 {
                                                     <form asp-action="Delete" asp-controller="Comments" method="post" class="d-inline">
                                                         <input type="hidden" name="blogId" value="@Model.Id" />
                                                         <input type="hidden" name="commentId" value="@reply.Id" />
-                                                        <button type="submit" class="btn btn-danger btn-sm ms-2">Delete</button>
+                                                        <button type="submit" style="float:right" class="btn btn-danger btn-sm ms-4">Delete</button>
                                                     </form>
                                                 }
+                                                <span class="text-muted" style="float:right;">@reply.CreatedDate.ToString()</span>
                                             </div>
                                         </li>
                                     }
-                                </ul>
-                            }
+                                }
+                            </ul>
                         </li>
                     }
                 </ul>
