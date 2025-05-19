@@ -45,20 +45,6 @@ async function AddComment() {
 
             document.getElementById('comment-input').value = '';
 
-            //// create reply btn
-            //const replyButton = document.createElement('a');
-            //replyButton.innerHTML = 'Reply';
-            //replyButton.href = '#';
-            //replyButton.className = 'reply-btn me-3';
-            //replyButton.style.float = 'right';
-            //replyButton.onclick = function (e) {
-            //    e.preventDefault();
-            //    // Call your reply input logic here, e.g.:
-            //    // OpenReplyInput(result.result.id, commentContent);
-            //};
-
-            //li.appendChild();
-
             document.getElementById('comment-list').appendChild(li);
 
             document.getElementById('comment-input').value = '';
@@ -88,14 +74,41 @@ async function OpenReplyInput(parentCommentId, cmtContentParent) {
     document.getElementById('comment-reply').appendChild(divInput);
 }
 
-//// Example SendReply function (implement server call as needed)
-//async function SendReply(parentCommentId) {
-//    const replyContent = document.getElementById('reply-input').value;
-//    // TODO: Implement AJAX call to send reply to server
-//    console.log(`Reply to comment ${parentCommentId}: ${replyContent}`);
-//    // Remove input after sending
-//    const inputDiv = document.getElementById('active-reply-input');
-//    if (inputDiv) inputDiv.remove();
-//}
+async function SendReply(parentCommentId) {
+    const blogId = $('#blog-id').val();
+    const replyContent = $('#reply-input').val();
+
+    const formData = new FormData();
+    formData.append("Content", replyContent);
+    formData.append("BlogId", blogId);
+    formData.append('ParentCommentId', parentCommentId);
+
+    const response = await fetch("/Comments", {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        const result = response.json();
+
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = `
+                        <div>
+                            <strong class="username-response">${result.result.username}</strong>: ${result.result.content}
+                            <span class="text-muted" style="float:right;">${result.result.createdDate}</span>
+                            
+                        </div>
+                        `
+    }
+
+
+    //const replyContent = document.getElementById('reply-input').value;
+    ////const response = await fetch('/Comments',)
+    //console.log(`Reply to comment ${parentCommentId}: ${replyContent}`);
+    //// Remove input after sending
+    //const inputDiv = document.getElementById('active-reply-input');
+    //if (inputDiv) inputDiv.remove();
+}
 
 

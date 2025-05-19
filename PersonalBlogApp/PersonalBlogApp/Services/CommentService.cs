@@ -30,6 +30,7 @@ namespace PersonalBlogApp.Services
                 Content = request.Content,
                 UserId = request.UserId,
                 BlogId = request.BlogId,
+                ParentId = request.ParentCommentId
             };
 
             var result = await _commentRepository.CreateAsync(newComment);

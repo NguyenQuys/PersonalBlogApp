@@ -17,7 +17,7 @@ namespace PersonalBlogApp.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost("Comments/")]
+        [HttpPost("Comments")]
         public async Task<IActionResult> Create([FromForm] CommentRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
