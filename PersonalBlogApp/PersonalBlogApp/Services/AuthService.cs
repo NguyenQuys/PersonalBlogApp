@@ -106,7 +106,7 @@ namespace PersonalBlogApp.Services
         private async Task<string> SaveImageFileAsync(IFormFile file)
         {
             var folderPath = Path.Combine("wwwroot/images/avatar");
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var fileName = file.FileName;
             var filePath = Path.Combine(folderPath, fileName);
 
             try

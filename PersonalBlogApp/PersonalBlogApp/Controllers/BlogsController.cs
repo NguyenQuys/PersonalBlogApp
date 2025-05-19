@@ -39,8 +39,13 @@ namespace PersonalBlogApp.Controllers
         // add blog
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index([FromForm] BlogRequest request)
+        public async Task<IActionResult> Create([FromForm] BlogRequest request)
         {
+            if(!ModelState.IsValid)
+            {
+                return View();
+            }
+
             var result = await _blogService.CreateAsync(request);
             return RedirectToAction("Details", new { id = result.Id });
         }
