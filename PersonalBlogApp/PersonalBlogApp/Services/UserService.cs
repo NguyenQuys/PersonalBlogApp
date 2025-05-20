@@ -12,7 +12,7 @@ namespace PersonalBlogApp.Services
         Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue);
         Task<DetailUserResponse> GetUser(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
-        Task<string> DeleteAsync(string id);
+        Task DeleteAsync(string id);
     }
 
     public class UserService : IUserService
@@ -28,12 +28,10 @@ namespace PersonalBlogApp.Services
             _roleManager = roleManager;
         }
 
-        public async Task<string> DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
             var result = await _userManager.DeleteAsync(existingUser);
-    
-            return "Delete successfully";
         }
 
         public async Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue)

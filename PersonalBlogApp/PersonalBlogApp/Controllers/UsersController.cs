@@ -23,7 +23,6 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet("Users")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Users(string username, string roleValue) // send params form search and filter 
         {
             var getAllUsers = await _userService.GetAllAsync(username, roleValue);
@@ -73,8 +72,8 @@ namespace PersonalBlogApp.Controllers
         [HttpDelete("Users/{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            var result = await _userService.DeleteAsync(id);
-            return Json(result);
+            await _userService.DeleteAsync(id);
+            return Ok();
         }
     }
 }

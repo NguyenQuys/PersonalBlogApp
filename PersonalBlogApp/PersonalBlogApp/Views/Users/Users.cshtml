@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<PersonalBlogApp.Models.User>
 
 @{
-	ViewData["Title"] = "GetAllUsers";
+	ViewData["Title"] = "Users";
 }
 
-<h1>GetAllUsers</h1>
+<h1>Users</h1>
 @if (TempData["SuccessMessage"] != null)
 {
 	<div class="alert alert-success">
@@ -21,7 +21,7 @@
 			</div>
 		</form>
 	</div>
-	<div>
+	<div class="col-4">
 		<form method="get" asp-action="Index">
 			<select name="roleValue" class="form-select" onchange="this.form.submit()">
 				<option disabled selected>Choose role</option>
@@ -48,7 +48,9 @@
 			<th>
 				@Html.DisplayNameFor(model => model.AvatarUrl)
 			</th>
-			<th></th>
+			<th>
+				Action
+			</th>
 		</tr>
 	</thead>
 	<tbody>

@@ -2,63 +2,60 @@
 @using System.Security.Claims
 
 @{
-    ViewData["Title"] = "CreateAsync";
+	ViewData["Title"] = "CreateAsync";
 }
 
-<h1>CreateAsync</h1>
+<h1>Create new blog</h1>
 @{
-    string userId = "";
-    if (User.Identity.IsAuthenticated)
-    {
-        userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
+	string userId = "";
+	if (User.Identity.IsAuthenticated)
+	{
+		userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+	}
 }
 
-<h4>BlogRequest</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea id="content" asp-for="Content" rows="10" cols="80">
-                    Enter content...
-                </textarea>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Priority" class="control-label"></label>
-                <select asp-for="Priority" class="form-control">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <span asp-validation-for="Priority" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="hidden" asp-for="UserId" value="@userId" class="form-control" />
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+	<form asp-action="Create" method="post">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="form-group my-2">
+			<label asp-for="Title" class="control-label"></label>
+			<input asp-for="Title" class="form-control" />
+			<span asp-validation-for="Title" class="text-danger"></span>
+		</div>
+		<div class="form-group my-2">
+			<label asp-for="Content" class="control-label"></label>
+			<textarea id="content" asp-for="Content" rows="10" cols="80">
+					Enter content...
+				</textarea>
+			<span asp-validation-for="Content" class="text-danger"></span>
+		</div>
+		<div class="form-group my-2">
+			<label asp-for="Priority" class="control-label"></label>
+			<select asp-for="Priority" class="form-select">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<span asp-validation-for="Priority" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<input type="hidden" asp-for="UserId" value="@userId" class="form-control" />
+		</div>
+		<div class="form-group">
+			<input style="float:right" type="submit" value="Create" class="btn btn-primary my-2" />
+		</div>
+	</form>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+	<a class="my-2" asp-action="Index">Back to List</a>
 </div>
 
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('content');
+	CKEDITOR.replace('content');
 </script>

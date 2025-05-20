@@ -29,6 +29,12 @@ namespace PersonalBlogApp.Services
             string fileName = "";
             List<string> errors = new List<string>();
 
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if(existingUser != null)
+            {
+                errors.Add("Email is already exist");
+            }
+
             var user = new User
             {
                 UserName = request.UserName,
@@ -38,7 +44,7 @@ namespace PersonalBlogApp.Services
 
             var result = await _userManager.CreateAsync(user, request.PasswordHash);
 
-            if (result.Succeeded)
+            if (result.Succeeded && errors.Count == 0)
             {
                 await _userManager.AddToRoleAsync(user, "User");
 

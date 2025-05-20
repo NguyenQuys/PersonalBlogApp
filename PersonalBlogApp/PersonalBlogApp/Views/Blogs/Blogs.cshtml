@@ -4,7 +4,7 @@
 @{
 	ViewData["Title"] = "GetAll";
 }
-<h1>GetAll</h1>
+<h1>Blogs</h1>
 @{
 	var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -20,29 +20,38 @@
 <div class="row">
 	<div class="col-6">
 		<p>
-			<a asp-action="Create">Create New</a>
+			<a class="btn btn-primary" asp-action="Create">Create New</a>
 		</p>
 	</div>
 	<div class="col-6">
 		<form asp-action="Index" method="get">
-			<label>Sort by</label>
-			<select name="sortValue">
-				<option selected="" disabled>Choose</option>
-				<option value="newest">Newest</option>
-				<option value="oldest">Oldest</option>
-			</select>
-			<label>Priority</label>
-			<select name="priorityValue">
-				<option selected="">Choose</option>
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-			</select>
-			<button type="submit">Filter</button>
+			<div class="row align-items-end">
+				<div class="col">
+					<label for="sortValue" class="form-label">Sort by</label>
+					<select name="sortValue" class="form-select">
+						<option selected disabled>Choose</option>
+						<option value="newest">Newest</option>
+						<option value="oldest">Oldest</option>
+					</select>
+				</div>
+				<div class="col">
+					<label for="priorityValue" class="form-label">Priority</label>
+					<select name="priorityValue" class="form-select">
+						<option selected>Choose</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</div>
+				<div class="col-auto">
+					<button type="submit" class="btn btn-primary">Filter</button>
+				</div>
+			</div>
 		</form>
 	</div>
+
 </div>
 <table class="table">
 	<thead>
@@ -85,22 +94,17 @@
 					@Html.DisplayFor(modelItem => item.Priority)
 				</td>
 				<td>
-					@{
-						if (item.UserId.Equals(currentUserId))
-						{
-							<a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-
-							<span> |</span>
-						}
+					@if (item.UserId.Equals(currentUserId))
+					{
+						<a class="btn btn-primary me-2 my-1" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
 					}
-					<a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-					@{
-						if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
-						{
-							<a class="btn btn-danger" onclick=DeleteBlog('@item.Id')>Delete</a>
-						}
+					<a class="btn btn-success me-2 my-1" asp-action="Details" asp-route-id="@item.Id">Details</a>
+					@if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
+					{
+						<a class="btn btn-danger my-1" onclick="DeleteBlog('@item.Id')">Delete</a>
 					}
 				</td>
+
 			</tr>
 		}
 	</tbody>

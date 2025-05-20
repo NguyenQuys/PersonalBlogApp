@@ -6,7 +6,6 @@
 	var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
-<h1>Detail</h1>
 @if (TempData["Error"] != null)
 {
 	<div class="alert alert-danger">@TempData["Error"]</div>
@@ -17,116 +16,106 @@ else if (TempData["Success"] != null)
 }
 
 <div>
-	<h4>Blog</h4>
-	<hr />
-	<dl class="row">
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.User)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.User.UserName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Title)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Title)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Content)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.Raw(Model.Content)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.CreatedDate)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.CreatedDate)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Priority)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Priority)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Comments)
-		</dt>
-        <dd class="col-sm-10">
-            @if (Model.Comments != null && Model.Comments.Any())
-            {
-                <ul class="list-group" id="comment-list">
-                    @foreach (var cmt in Model.Comments.Where(c => c.ParentId == null))
-                    {
-                        <li class="list-group-item" id="comment-@cmt.Id">
-                            <div class="row">
-                                <div class="col-9">
-                                    <strong class="username-response">@cmt.User?.UserName</strong>:
-                                    @cmt.Content
-                                    <span class="text-muted" style="float:right;">@cmt.CreatedDate.ToString()</span>
-                                </div>
-                                <div class="col-3 d-flex">
-                                    @if (cmt.UserId == currentUserId || User.IsInRole("Admin"))
-                                    {
-                                        <form asp-action="Delete" asp-controller="Comments" method="post">
-                                            <input type="hidden" name="blogId" value="@Model.Id" />
-                                            <input type="hidden" name="commentId" value="@cmt.Id" />
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-                                        <span class="mx-3"> </span>
-                                    }
-                                    <button type="button" onclick="OpenReplyInput('@cmt.Id', '@cmt.Content')" class="btn btn-primary">Reply</button>
-                                </div>
+	<div class="d-flex">
+		<div>
+			<img src="@Model.User.AvatarUrl" alt="Avatar" class="rounded-circle border border-primary" height="50" width="50" />
+		</div>
+		<div class="mx-2">
+			<h1><strong>@Model.User.UserName</strong></h1>
+		</div>
+        <div class="ms-auto align-self-end">
+            <h5 class="text-muted mb-0">@Model.CreatedDate</h5>
+        </div>
+	</div>
+	<div class="my-2">
+		<h4><strong>@Model.Title</strong></h4>
+	</div>
+	<div>
+		<p>@Html.Raw(Model.Content)</p>
+	</div>
+	<div>
+		<div class="my-2">
+			<form id="comment-form">
+				<div class="input-group">
+					<input name="Content" class="form-control" id="comment-input" placeholder="Input comment..."></input>
+					<input type="hidden" name="BlogId" id="blog-id" value="@Model.Id" />
+					<button type="button" onclick="AddComment()" class="btn btn-primary">Submit Comment</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div id="comment-reply"></div>
+	<div>
+        <h4>Comments</h4>
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <ul class="list-group" id="comment-list">
+                @foreach (var cmt in Model.Comments.Where(c => c.ParentId == null))
+                {
+                    <li class="list-group-item" id="comment-@cmt.Id">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-10 d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong class="username-response">@cmt.User?.UserName</strong>: @cmt.Content
+                                </span>
+                                <span class="text-muted ms-2">@cmt.CreatedDate.ToString()</span>
                             </div>
-                            @{
-                                var replies = Model.Comments.Where(r => r.ParentId == cmt.Id).ToList();
-                            }
+                            <div class="col-12 col-lg-2 d-flex justify-content-lg-end align-items-center mt-2 mt-lg-0">
+                                @if (cmt.UserId == currentUserId || User.IsInRole("Admin"))
+                                {
+                                    <form asp-action="Delete" asp-controller="Comments" method="post" class="me-2">
+                                        <input type="hidden" name="blogId" value="@Model.Id" />
+                                        <input type="hidden" name="commentId" value="@cmt.Id" />
+                                        <button type="submit" class="btn btn-link">Delete</button>
+                                    </form>
+                                }
+                                <button type="button" onclick="OpenReplyInput('@cmt.Id', '@cmt.Content')" class="btn btn-link">Reply</button>
+                            </div>
+                        </div>
 
-                            <ul class="list-group mt-2 ms-4" id="reply-list-@cmt.Id">
+                        @{
+                            var replies = Model.Comments.Where(r => r.ParentId == cmt.Id).ToList();
+                        }
+
+                        <ul class="list-group mt-2 ms-4" id="reply-list-@cmt.Id">
 
                             @if (replies.Any())
                             {
-                                    @foreach (var reply in replies)
-                                    {
-                                        <li class="list-group-item">
-                                            <div>
-                                                <strong class="username-response">@reply.User?.UserName</strong>:
-                                                @reply.Content
-                                                @if (reply.UserId == currentUserId || User.IsInRole("Admin"))
-                                                {
-                                                    <form asp-action="Delete" asp-controller="Comments" method="post" class="d-inline">
-                                                        <input type="hidden" name="blogId" value="@Model.Id" />
-                                                        <input type="hidden" name="commentId" value="@reply.Id" />
-                                                        <button type="submit" style="float:right" class="btn btn-danger btn-sm ms-4">Delete</button>
-                                                    </form>
-                                                }
-                                                <span class="text-muted" style="float:right;">@reply.CreatedDate.ToString()</span>
-                                            </div>
-                                        </li>
-                                    }
+                                @foreach (var reply in replies)
+                                {
+                                    <li class="list-group-item">
+                                        <div>
+                                            <strong class="username-response">@reply.User?.UserName</strong>:
+                                            @reply.Content
+                                            @if (reply.UserId == currentUserId || User.IsInRole("Admin"))
+                                            {
+                                                <form asp-action="Delete" asp-controller="Comments" method="post" class="d-inline">
+                                                    <input type="hidden" name="blogId" value="@Model.Id" />
+                                                    <input type="hidden" name="commentId" value="@reply.Id" />
+                                                    <button type="submit" style="float:right" class="btn btn-link btn-sm ms-4">Delete</button>
+                                                </form>
+                                            }
+                                            <span class="text-muted" style="float:right;">@reply.CreatedDate.ToString()</span>
+                                        </div>
+                                    </li>
                                 }
-                            </ul>
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <ul class="list-group" id="comment-list"></ul>
-            }
-        </dd>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <ul class="list-group" id="comment-list"></ul>
+        }
 
-		<form id="comment-form">
-			<textarea name="Content" id="comment-input" placeholder="Input comment"></textarea>
-			<input type="hidden" name="BlogId" id="blog-id" value="@Model.Id" />
-			<button type="button" onclick="AddComment()" class="btn btn-primary">Submit Comment</button>
-		</form>
-		<div id="comment-reply"></div>
-	</dl>
+	</div>
 </div>
 <div>
-	<a asp-action="Index" asp-controller="Blogs">Back to List</a>
+    <div style="float:right" class="mt-3">
+        <a  class="btn btn-primary">Back to List</a>
+    </div>
 </div>
 <script src="~/js/comment.js" asp-append-version="true"></script>
 

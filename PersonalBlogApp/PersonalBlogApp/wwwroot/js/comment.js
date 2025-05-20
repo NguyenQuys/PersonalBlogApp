@@ -25,18 +25,18 @@ async function AddComment() {
             li.className = 'list-group-item';
             li.id = `comment-${result.result.id}`
             li.innerHTML = `<div class="row">
-                                <div class="col-9">
-                                    <strong class="username-response">${userName}</strong>: ${commentContent}
-                                    <span class="text-muted" style="float:right;">${createdDate}</span>
+                                <div class="col-lg-10 col-md-10 col-sm-10 d-flex justify-content-between align-items-center">
+                                    <span><strong class="username-response">${userName}</strong>: ${commentContent}</span>
+                                    <span class="text-muted ms-2">${createdDate}</span>
                                 </div>
-                                <div class="col-3 d-flex">
+                                <div class="col-lg-2 col-md-2 col-sm-2 d-flex justify-content-end">
                                         <form method="post" action="/Comments/Delete">
                                             <input type="hidden" name="blogId" value="${result.result.blogId}">                                            
                                             <input type="hidden" name="commentId" value="${result.result.id}">
-                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" class="btn btn-link">Delete</button>
                                         </form>
                                         <span class="mx-3"> </span>
-                                    <button type="button" onclick="OpenReplyInput('${result.result.id}', '${commentContent}')" class="btn btn-primary">Reply</button>
+                                    <button type="button" onclick="OpenReplyInput('${result.result.id}', '${commentContent}')" class="btn btn-link">Reply</button>
                                 </div>
                             </div>
                             `
@@ -108,7 +108,7 @@ async function SendReply(parentCommentId) {
                 <form method='post' class='d-inline' action='/Comments/Delete'>
                     <input type='hidden' name='blogId' value='${result.result.blogId}'>
                     <input type='hidden' name='commentId' value='${result.result.id}'>
-                    <button type='submit' style='float:right' class='btn btn-danger btn-sm ms-4'>Delete</button>
+                    <button type='submit' style='float:right' class='btn btn-link btn-sm ms-4'>Delete</button>
                 </form>
                 <span class="text-muted" style="float:right;">${createdDate}</span>
             </div>

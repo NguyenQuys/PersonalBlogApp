@@ -22,8 +22,8 @@ namespace PersonalBlogApp.Controllers
         }
 
         // get all blogs
-        [HttpGet]
-        public async Task<IActionResult> Index(string sortValue, int priorityValue)
+        [HttpGet("Blogs")]
+        public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
         {
             var result = await _blogService.SortAndFilter(sortValue, priorityValue);
             return View(result);
