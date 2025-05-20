@@ -8,7 +8,7 @@ namespace PersonalBlogApp.Repositories
     public interface IBlogRepository : IGenericsRepository<Blog>
     {
         Task<IEnumerable<Blog>> GetBlogs();
-        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue);
+        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue, string userId);
     }
 
     public class BlogRepository : GenericsRepository<Blog>, IBlogRepository
@@ -17,7 +17,7 @@ namespace PersonalBlogApp.Repositories
         {
         }
 
-        public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue)
+        public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue, string userId)
         {
             var query = _dbSet.AsQueryable();
 
@@ -33,6 +33,11 @@ namespace PersonalBlogApp.Repositories
             else if (sortValue.Equals("oldest"))
             {
                 query = query.OrderBy(m => m.CreatedDate);
+            }
+
+            if (userId != null)
+            {
+                query = query.Where(m=>m.UserId == userId);
             }
 
             return await query.ToListAsync();

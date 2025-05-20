@@ -13,6 +13,7 @@ namespace PersonalBlogApp.Requests
         public string Content { get; set; }
         public int Priority { get; set; }
         public string UserId { get; set; }
+        public bool IsPublic { get; set; }
         public string? UserRole { get; set; }
     }
 }

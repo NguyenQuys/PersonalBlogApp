@@ -11,7 +11,7 @@ namespace PersonalBlogApp.Services
         //Task<IEnumerable<Blog>> GetBlogs();
         Task<Blog> CreateAsync(BlogRequest request);
         Task<Blog> UpdateAsync(BlogRequest request);
-        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue);
+        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue,string userId);
     }
 
     public class BlogService : IBlogService
@@ -66,15 +66,38 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-        public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int priorityValue)
+        public async Task<IEnumerable<Blog>> SortAndFilter(string sortBy, int priority, string currentUserId)
         {
-            var result = await _blogRepository.SortAndFilter(sortValue, priorityValue);
-            foreach (var user in result)
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
+            IList<string> currentUserRoles = new List<string>();
+
+            var isCurrentUserAdmin = false;
+            if (currentUser != null)
             {
-                user.User = await _userManager.FindByIdAsync(user.UserId);
+                currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+                if (currentUserRoles.Contains("Admin"))
+                {
+                    isCurrentUserAdmin = true;
+                }
             }
-            return result;
+
+            IEnumerable<Blog> blogs = new List<Blog>();
+            if (isCurrentUserAdmin)
+            {
+                blogs = await _blogRepository.SortAndFilter(sortBy, priority, null);
+            }
+            else
+            {
+                blogs = await _blogRepository.SortAndFilter(sortBy, priority, currentUserId);
+            }
+
+            foreach (var blog in blogs)
+            {
+                blog.User = await _userManager.FindByIdAsync(blog.UserId);
+            }
+            return blogs;
         }
+
 
         public async Task<Blog> UpdateAsync(BlogRequest request)
         {    
@@ -93,6 +116,7 @@ namespace PersonalBlogApp.Services
                 UserId = request.UserId,
                 User = await _userManager.FindByIdAsync(request.UserId),
                 Priority = request.Priority,
+                IsPublic = request.IsPublic
             };
 
             var result = await _blogRepository.UpdateAsync(blogToUpdate);

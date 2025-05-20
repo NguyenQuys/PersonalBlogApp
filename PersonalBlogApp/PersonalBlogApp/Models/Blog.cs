@@ -20,7 +20,7 @@ namespace PersonalBlogApp.Models
         [Range(1,5, ErrorMessage ="Priority in range 1 - 5")]
         public int Priority { get; set; }
 
-        public bool IsPublic { get; set; } = true;
+        public bool IsPublic { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
     }

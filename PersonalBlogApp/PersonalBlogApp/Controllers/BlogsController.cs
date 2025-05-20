@@ -31,7 +31,8 @@ namespace PersonalBlogApp.Controllers
         [HttpGet("Blogs/Manage")]
         public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
         {
-            var result = await _blogService.SortAndFilter(sortValue, priorityValue);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _blogService.SortAndFilter(sortValue, priorityValue, userId);
             return View(result);
         }
 
