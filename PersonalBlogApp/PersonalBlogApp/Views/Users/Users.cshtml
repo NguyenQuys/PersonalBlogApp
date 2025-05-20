@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PersonalBlogApp.Models.User>
+﻿@model IEnumerable<PersonalBlogApp.Responses.DetailUserResponse>
 
 @{
 	ViewData["Title"] = "Users";
@@ -16,7 +16,7 @@
 	<div class="col-8">
 		<form asp-action="Index" class="mb-3" method="get">
 			<div class="input-group">
-				<input type="text" name="username" class="form-control" placeholder="Input username to search...">
+				<input type="text" name="searchValue" class="form-control" placeholder="Input username or email to search...">
 				<button class="btn btn-primary" type="submit">Search</button>
 			</div>
 		</form>
@@ -37,16 +37,19 @@
 	<thead>
 		<tr>
 			<th>
-				@Html.DisplayNameFor(model => model.Id)
+				@Html.DisplayNameFor(model => model.User.Id)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.UserName)
+				@Html.DisplayNameFor(model => model.User.UserName)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Email)
+				@Html.DisplayNameFor(model => model.User.Email)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.AvatarUrl)
+				@Html.DisplayNameFor(model => model.UserRoles)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.User.Avatar)
 			</th>
 			<th>
 				Action
@@ -58,21 +61,29 @@
 		{
 			<tr>
 				<td>
-					@Html.DisplayFor(modelItem => item.Id)
+					@Html.DisplayFor(modelItem => item.User.Id)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.UserName)
+					@Html.DisplayFor(modelItem => item.User.UserName)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Email)
+					@Html.DisplayFor(modelItem => item.User.Email)
 				</td>
 				<td>
-					<img src="@item.AvatarUrl" width="70%" />
+					@{
+						foreach(var role in item.UserRoles)
+						{
+							<p>@role</p>
+						}
+					}
+				</td>
+				<td>
+					<img src="@item.User.Avatar" width="50" height="50" />
 				</td>
 				<td>
 					<div class="d-flex align-items-center justify-content-center">
-						<a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.Id">Detail</a>
-						<a class="btn btn-danger mx-2" onclick="DeleteUser('@item.Id')" asp-route-id="@item.Id">Remove</a>
+						<a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.User.Id">Detail</a>
+						<a class="btn btn-danger mx-2" onclick="DeleteUser('@item.User.Id')" asp-route-id="@item.User.Id">Remove</a>
 					</div>
 				</td>
 			</tr>

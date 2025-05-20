@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Scripting;
 
 namespace PersonalBlogApp.Controllers
 {
-    [Authorize]
     public class BlogsController : Controller
     {
         private readonly IBlogService _blogService;
@@ -21,8 +20,15 @@ namespace PersonalBlogApp.Controllers
             _blogService = blogService;
         }
 
-        // get all blogs
-        [HttpGet("Blogs")]
+        // get all blogs for user
+        public async Task<IActionResult> Index()
+        {
+            var result = await _blogService.GetAllAsync();
+            return View(result);
+        }
+
+        // get all blogs for admin
+        [HttpGet("Blogs/Manage")]
         public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
         {
             var result = await _blogService.SortAndFilter(sortValue, priorityValue);

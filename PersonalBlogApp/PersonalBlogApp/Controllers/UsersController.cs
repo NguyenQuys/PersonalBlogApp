@@ -23,9 +23,9 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet("Users")]
-        public async Task<IActionResult> Users(string username, string roleValue) // send params form search and filter 
+        public async Task<IActionResult> Users(string searchValue, string roleValue) // send params form search and filter 
         {
-            var getAllUsers = await _userService.GetAllAsync(username, roleValue);
+            var getAllUsers = await _userService.GetAllAsync(searchValue, roleValue);
             return View(getAllUsers);
         }
 

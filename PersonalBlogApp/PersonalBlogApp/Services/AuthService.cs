@@ -39,7 +39,9 @@ namespace PersonalBlogApp.Services
             {
                 UserName = request.UserName,
                 Email = request.Email,
-                AvatarUrl = "/images/avatar/" + request.AvatarUrl.FileName ?? ""
+                AvatarUrl = "/images/avatar/" + request.AvatarUrl.FileName ?? "",
+                FirstName = request.Firstname,
+                LastName = request.Lastname,
             };
 
             var result = await _userManager.CreateAsync(user, request.PasswordHash);

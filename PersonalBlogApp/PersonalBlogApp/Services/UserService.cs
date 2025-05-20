@@ -9,7 +9,7 @@ namespace PersonalBlogApp.Services
 {
     public interface IUserService 
     {
-        Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue);
+        Task<IEnumerable<DetailUserResponse>> GetAllAsync(string? searchValue, string? roleValue);
         Task<DetailUserResponse> GetUser(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
         Task DeleteAsync(string id);
@@ -34,35 +34,58 @@ namespace PersonalBlogApp.Services
             var result = await _userManager.DeleteAsync(existingUser);
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync(string? username, string? roleValue)
+        public async Task<IEnumerable<DetailUserResponse>> GetAllAsync(string? searchValue, string? roleValue)
         {
-            var users = _userManager.Users.AsQueryable();
+            var usersQuery = _userManager.Users.AsQueryable();
+            List<User> users;
 
-            if (!string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(searchValue))
             {
-                users = users.Where(u => u.UserName.Contains(username));
-            }
+                users = await usersQuery.Where(u => u.UserName.Contains(searchValue)).ToListAsync();
 
-            var userList = await users.ToListAsync();
-
-            if (!string.IsNullOrEmpty(roleValue))
-            {
-                var filteredUsers = new List<User>();
-                foreach (var user in userList)
+                if (users.Count == 0)
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Contains(roleValue, StringComparer.OrdinalIgnoreCase))
-                    {
-                        filteredUsers.Add(user);
-                    }
+                    users = await usersQuery.Where(u => u.Email.Contains(searchValue)).ToListAsync();
                 }
-                return filteredUsers;
             }
             else
             {
-                return userList;
+                users = await usersQuery.ToListAsync();
             }
+
+            var result = new List<DetailUserResponse>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                if (!string.IsNullOrEmpty(roleValue) && !roles.Contains(roleValue, StringComparer.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var userRequest = new UserRequest
+                {
+                    Id = user.Id,
+                    Firstname = user.FirstName,
+                    Lastname = user.LastName,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Avatar = user.AvatarUrl,
+                    Roles = roles
+                };
+
+                result.Add(new DetailUserResponse
+                {
+                    User = userRequest,
+                    UserRoles = roles
+                });
+            }
+
+            return result;
         }
+
+
 
         public async Task<DetailUserResponse> GetUser(string id)
         {
@@ -81,7 +104,9 @@ namespace PersonalBlogApp.Services
                 Email = existingUser.Email,
                 Avatar = existingUser.AvatarUrl,
                 Roles = roles,
-                LockoutTime = active
+                LockoutTime = active,
+                Firstname = existingUser.FirstName,
+                Lastname = existingUser.LastName
             };
 
             return new DetailUserResponse
@@ -94,6 +119,15 @@ namespace PersonalBlogApp.Services
 
         public async Task<ApiResponse> UpdateAsync(UserRequest request, List<string> rolesSelected)
         {
+            if(string.IsNullOrEmpty(request.Firstname) || string.IsNullOrEmpty(request.Lastname))
+            {
+                return new ApiResponse
+                {
+                    Status = 400,
+                    Result = new List<string> { "First name and last name are required." }
+                };
+            }
+
             if (string.IsNullOrWhiteSpace(request.Email))
             {
                 return new ApiResponse
@@ -105,7 +139,10 @@ namespace PersonalBlogApp.Services
 
             var existingUser = await _userManager.FindByIdAsync(request.Id);
 
+            // update user
             existingUser.UserName = request.UserName;
+            existingUser.FirstName = request.Firstname;
+            existingUser.LastName = request.Lastname;
             existingUser.Email = request.Email;
             if (request.AvatarUrl != null)
             {

@@ -17,8 +17,10 @@ namespace PersonalBlogApp.Models
 
         public User User { get; set; }
 
-        [Range(1,5, ErrorMessage ="Độ ưu tiên chỉ trong khoảng từ 1 đến 5")]
+        [Range(1,5, ErrorMessage ="Priority in range 1 - 5")]
         public int Priority { get; set; }
+
+        public bool IsPublic { get; set; } = true;
 
         public ICollection<Comment> Comments { get; set; }
     }

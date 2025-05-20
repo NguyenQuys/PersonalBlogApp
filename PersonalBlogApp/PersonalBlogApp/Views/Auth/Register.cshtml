@@ -4,6 +4,16 @@
 	<form asp-action="Register" enctype="multipart/form-data">
 		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 		<div class="mb-3">
+			<label asp-for="Firstname" class="form-label">Firstname</label>
+			<input asp-for="Firstname" type="text" class="form-control" placeholder="Enter Firstname">
+			<span asp-validation-for="Firstname" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="Lastname" class="form-label">Lastname</label>
+			<input asp-for="Lastname" type="text" class="form-control" placeholder="Enter Lastname">
+			<span asp-validation-for="Lastname" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
 			<label asp-for="Email" class="form-label">Email</label>
 			<input asp-for="Email" type="email" class="form-control" placeholder="Enter Email">
 			<span asp-validation-for="Email" class="text-danger"></span>

@@ -1,6 +1,4 @@
-﻿let firstReplyTo = null;
-
-async function AddComment() {
+﻿async function AddComment() {
     const content = $('#comment-input').val();
     const blogId = $('#blog-id').val();
 
@@ -65,10 +63,9 @@ async function OpenReplyInput(parentCommentId, cmtContentParent) {
     divInput.innerHTML = `
         <input type="text" class="form-control" placeholder="Reply to ${cmtContentParent}..." id="reply-input">
         <button class="btn btn-primary" type="button" onclick="SendReply('${parentCommentId}')">Send</button>
-
     `;
 
-    document.getElementById('comment-reply').appendChild(divInput);
+    document.getElementById(`reply-list-${parentCommentId}`).appendChild(divInput);
 }
 
 async function SendReply(parentCommentId) {

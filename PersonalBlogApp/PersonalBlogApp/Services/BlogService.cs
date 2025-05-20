@@ -8,7 +8,7 @@ namespace PersonalBlogApp.Services
 {
     public interface IBlogService : IGenericsService<Blog> {
 
-        //Task<IEnumerable<Blog>> GetByUserId(string userId);
+        //Task<IEnumerable<Blog>> GetBlogs();
         Task<Blog> CreateAsync(BlogRequest request);
         Task<Blog> UpdateAsync(BlogRequest request);
         Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue);
@@ -47,14 +47,13 @@ namespace PersonalBlogApp.Services
 
         public async Task<IEnumerable<Blog>> GetAllAsync()
         {
-            throw new Exception();
+            var result = await _blogRepository.GetBlogs();
+            foreach (var user in result)
+            {
+                user.User = await _userManager.FindByIdAsync(user.UserId);
+            }
+            return result;
         }
-
-        //public async Task<IEnumerable<Blog>> GetByUserId(string userId)
-        //{
-        //    var result = await _blogRepository.GetByUserId(userId);
-        //    return result;
-        //}
 
         public async Task<Blog> GetByIdAsync(Guid id)
         {

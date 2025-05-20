@@ -7,6 +7,7 @@ namespace PersonalBlogApp.Repositories
 {
     public interface IBlogRepository : IGenericsRepository<Blog>
     {
+        Task<IEnumerable<Blog>> GetBlogs();
         Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue);
     }
 
@@ -42,6 +43,11 @@ namespace PersonalBlogApp.Repositories
             return await _dbSet.Include(m => m.Comments)
                                 .ThenInclude(m=>m.User)
                                 .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<IEnumerable<Blog>> GetBlogs()
+        {
+            return await _dbSet.Where(m=>m.IsPublic).ToListAsync();
         }
     }
 }

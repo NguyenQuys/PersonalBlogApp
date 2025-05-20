@@ -22,6 +22,14 @@
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="User.Id" />
             <div class="form-group">
+                <label asp-for="User.Firstname" class="control-label"></label>
+                <input asp-for="User.Firstname" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="User.Lastname" class="control-label"></label>
+                <input asp-for="User.Lastname" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="User.UserName" class="control-label"></label>
                 <input asp-for="User.UserName" class="form-control" />
             </div>

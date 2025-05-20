@@ -64,14 +64,14 @@ namespace PersonalBlogApp.Controllers
                ModelState.AddModelError(string.Empty, result.Result.ToString());              
                return View(request);
             }
-            return RedirectToAction("Index", "Home");
+            return Redirect("/");
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             var result = await _authService.Logout();
-            return RedirectToAction("Index", "Home");
+            return Redirect("/");
         }
 
         [HttpGet]

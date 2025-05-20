@@ -1,0 +1,33 @@
+﻿@model IEnumerable<PersonalBlogApp.Models.Blog>
+@{
+	ViewData["Title"] = "NewsFeed";
+}
+
+
+
+@foreach (var blog in Model)
+{
+	<a class="unstyled-link" asp-action="Details" asp-route-id="@blog.Id">
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="d-flex">
+					<div>
+						<img src="@blog.User.AvatarUrl" alt="Avatar" class="rounded-circle border border-primary" height="50" width="50" />
+					</div>
+					<div class="mx-2 my-auto">
+						<h2><strong>@blog.User.UserName</strong></h2>
+					</div>
+					<div class="ms-auto align-self-end">
+						<h5 class="text-muted mb-0">@blog.CreatedDate</h5>
+					</div>
+				</div>
+				<div class="my-4">
+					<h4>@blog.Title</h4>
+				</div>
+				<div>
+					<p>@Html.Raw(blog.Content)</p>
+				</div>
+			</div>
+		</div>
+	</a>
+}
