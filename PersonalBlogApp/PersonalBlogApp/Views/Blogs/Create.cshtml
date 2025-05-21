@@ -20,19 +20,19 @@
 		@Html.AntiForgeryToken()
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="form-group my-2">
-			<label asp-for="Title" class="control-label"></label>
+			<label asp-for="Title" class="control-label mb-2"></label>
 			<input asp-for="Title" class="form-control" />
 			<span asp-validation-for="Title" class="text-danger"></span>
 		</div>
 		<div class="form-group my-2">
-			<label asp-for="Content" class="control-label"></label>
+			<label asp-for="Content" class="control-label mb-2"></label>
 			<textarea id="content" asp-for="Content" rows="10" cols="80">
 					Enter content...
 				</textarea>
 			<span asp-validation-for="Content" class="text-danger"></span>
 		</div>
 		<div class="form-group my-2">
-			<label asp-for="Priority" class="control-label"></label>
+			<label asp-for="Priority" class="control-label mb-2 "></label>
 			<select asp-for="Priority" class="form-select">
 				<option value="1">1</option>
 				<option value="2">2</option>
@@ -43,14 +43,14 @@
 			<span asp-validation-for="Priority" class="text-danger"></span>
 		</div>
 		<div class="form-group my-2">
-			<label asp-for="IsPublic" class="control-label"></label>
+			<label asp-for="IsPublic" class="control-label mb-2">Trạng thái</label>
 			<select asp-for="IsPublic" class="form-select">
 				<option value="true">Public</option>
 				<option value="false">Private</option>
 			</select>
 		</div>
 		<div class="form-group">
-			<input type="hidden" asp-for="UserId" value="@userId" class="form-control" />
+			<input type="hidden" asp-for="UserId" value="@userId"/>
 		</div>
 		<div class="form-group">
 			<input style="float:right" type="submit" value="Create" class="btn btn-primary my-2" />
@@ -59,7 +59,7 @@
 </div>
 
 <div>
-	<a class="my-2" asp-action="Index">Back to List</a>
+	<a class="my-2" href="javascript:history.back()">Back to List</a>
 </div>
 
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>

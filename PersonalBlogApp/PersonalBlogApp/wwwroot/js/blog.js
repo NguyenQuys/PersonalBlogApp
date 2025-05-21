@@ -4,7 +4,7 @@
             method: 'DELETE'
         });
         if (response.ok) {
-            window.location.href = '/Blogs';
+            window.location.href = '/Blogs/Manage';
         } else {
             console.error('Failed to delete the blog post.');
         }

@@ -32,7 +32,8 @@ namespace PersonalBlogApp.Services
                 Title = request.Title,
                 Content = request.Content,
                 UserId = request.UserId,
-                Priority = request.Priority
+                Priority = request.Priority,
+                IsPublic = request.IsPublic
             };
 
             var result = await _blogRepository.CreateAsync(newBlog);
@@ -97,7 +98,6 @@ namespace PersonalBlogApp.Services
             }
             return blogs;
         }
-
 
         public async Task<Blog> UpdateAsync(BlogRequest request)
         {    

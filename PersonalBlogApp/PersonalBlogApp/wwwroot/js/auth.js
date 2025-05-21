@@ -84,10 +84,15 @@ async function Logout() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const fileInput = document.querySelector('input[type="file"][name="AvatarUrl"]');
+    const fileInput = document.getElementById('avatar-file');
     const displayDiv = document.getElementById('display-avatar');
 
     fileInput.addEventListener('change', function (event) {
+        const oldAvatar = document.getElementById('old-avatar');
+        if (oldAvatar) {
+            oldAvatar.remove();
+        }
+
         displayDiv.innerHTML = ""; 
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {

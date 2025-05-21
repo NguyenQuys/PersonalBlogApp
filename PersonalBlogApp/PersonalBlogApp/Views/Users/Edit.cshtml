@@ -1,80 +1,85 @@
 ﻿@model PersonalBlogApp.Responses.DetailUserResponse
 
 @{
-    ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Update</h1>
 @{
-    if (TempData["Error"] != null)
-    {
-        <div class="text-danger">
-            @TempData["Error"]
-        </div>
-    }
+	if (TempData["Error"] != null)
+	{
+		<div class="text-danger">
+			@TempData["Error"]
+		</div>
+	}
 }
-<h4>User</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <form asp-action="Edit" asp-controller="Users" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="User.Id" />
-            <div class="form-group">
-                <label asp-for="User.Firstname" class="control-label"></label>
-                <input asp-for="User.Firstname" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="User.Lastname" class="control-label"></label>
-                <input asp-for="User.Lastname" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="User.UserName" class="control-label"></label>
-                <input asp-for="User.UserName" class="form-control" />
-            </div>
+	<div>
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		<form asp-action="Edit" asp-controller="Users" method="post" enctype="multipart/form-data">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="User.Id" />
+			<div class="form-group">
+				<label asp-for="User.Firstname" class="control-label mb-2"></label>
+				<input asp-for="User.Firstname" class="form-control mb-3" />
+			</div>
+			<div class="form-group">
+				<label asp-for="User.Lastname" class="control-label mb-2"></label>
+				<input asp-for="User.Lastname" class="form-control mb-3" />
+			</div>
+			<div class="form-group">
+				<label asp-for="User.UserName" class="control-label mb-2"></label>
+				<input asp-for="User.UserName" class="form-control mb-3" />
+			</div>
 
-            <div class="form-group">
-                <label asp-for="User.Email" class="control-label"></label>
-                <input type="email" asp-for="User.Email" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="User.AvatarUrl" class="control-label"></label>
-                <img src="@Model.User.Avatar" alt="Avatar" style="width: 100px; height: 100px;" />
-                <input type="file" asp-for="User.AvatarUrl" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="User.LockoutTime" class="control-label"></label>
-                <select asp-for="User.LockoutTime" class="control-label">
-                    <option value="" disabled>Choose time</option>
-                    <option value="">Unblock</option>
-                    <option value=1>1 muinute</option>
-                    <option value=10>10 minutes</option>
-                    <option value=30>30 minutes</option>
-                </select>
-            </div>
+			<div class="form-group">
+				<label asp-for="User.Email" class="control-label mb-2"></label>
+				<input type="email" asp-for="User.Email" class="form-control mb-3" />
+			</div>
+			<div class="form-group">
+				<label asp-for="User.LockoutTime" class="control-label mb-2"></label>
+				<select asp-for="User.LockoutTime" class="form-select mb-3">
+					<option value="" disabled>Choose time</option>
+					<option value="">Unblock</option>
+					<option value=1>1 muinute</option>
+					<option value=10>10 minutes</option>
+					<option value=30>30 minutes</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label asp-for="User.AvatarUrl" class="control-label mb-2">Avatar</label>
+				<input id="avatar-file" type="file" asp-for="User.AvatarUrl" class="form-control mb-3" accept=".png,.webp,.jpg,.jpeg">
+			</div>
+			<div class="form-group">
+				<div id="display-avatar" class="d-flex justify-content-center display-avatar"></div>
+				<div id="old-avatar" class="d-flex justify-content-center">
+					<img class="d-flex justify-content-center rounded-circle" src="@Model.User.Avatar" alt="Avatar" style="width: 100px; height: 100px;" />
+				</div>
+			</div>
 
-            <div class="form-group">
-                <label class="control-label">Roles</label>
-                @foreach (var role in Model.AllRoles)
-                {
-                    <div class="form-check">
-                        <input type="checkbox"
-                        class="form-check-input"
-                        name="rolesSelected"
-                        value="@role"
-                        @(Model.User.Roles.Contains(role) ? "checked" : "") />
-                        <label class="form-check-label">@role</label>
-                    </div>
-                }
-                <span asp-validation-for="User.Roles" class="text-danger"></span>
-            </div>
-            <button class="btn btn-primary" type="submit">Save</button>
-        </form>
-    </div>
+
+			<div class="form-group">
+				<label class="control-label mb-2">Roles</label>
+				@foreach (var role in Model.AllRoles)
+				{
+					<div class="form-check mb-3">
+						<input type="checkbox"
+							   class="form-check-input"
+							   name="rolesSelected"
+							   value="@role"
+						@(Model.User.Roles.Contains(role) ? "checked" : "") />
+						<label class="form-check-label">@role</label>
+					</div>
+				}
+				<span asp-validation-for="User.Roles" class="text-danger"></span>
+			</div>
+			<button class="btn btn-primary w-100" type="submit">Save</button>
+		</form>
+	</div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Index">Back to List</a>
 </div>
 
