@@ -36,7 +36,13 @@
                             </li>
 						}
                         <li>
+                            <a class="nav-link text-dark" asp-controller="Users" asp-action="UsersWithDatatable">Users Datatable</a>
+                        </li>
+                        <li>
                             <a class="nav-link text-dark" asp-controller="Blogs" asp-action="Blogs">Blogs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Auth" asp-action="ChangePassword">Change Password</a>
                         </li>
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -57,6 +63,7 @@
                                 <a style="cursor: pointer" class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
                         }
+
                     </ul>
                 </div>
             </div>

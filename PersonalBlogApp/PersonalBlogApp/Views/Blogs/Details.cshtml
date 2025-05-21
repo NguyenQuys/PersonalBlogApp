@@ -15,7 +15,7 @@ else if (TempData["Success"] != null)
 	<div class="alert alert-success">@TempData["Success"]</div>
 }
 <div class="my-3">
-	<a class="btn btn-link" asp-action="">Back to List</a>
+	<a class="btn btn-link" href="javascript:history.back()">Back to List</a>
 </div>
 
 <div class="card container">
@@ -43,7 +43,7 @@ else if (TempData["Success"] != null)
 					<div class="input-group">
 						<input name="Content" class="form-control" id="comment-input" placeholder="Input comment..."></input>
 						<input type="hidden" name="BlogId" id="blog-id" value="@Model.Id" />
-						<button type="button" onclick="AddComment()" class="btn btn-primary">Submit Comment</button>
+						<button type="button" onclick="AddComment()" class="btn btn-primary">Send</button>
 					</div>
 				</form>
 			</div>
@@ -55,7 +55,7 @@ else if (TempData["Success"] != null)
 				<ul class="list-group" id="comment-list">
 					@foreach (var cmt in Model.Comments.Where(c => c.ParentId == null))
 					{
-						<li class="list-group-item border-success pb-4" id="comment-@cmt.Id">
+						<li class="list-group-item border-success" id="comment-@cmt.Id">
 							<div class="row align-items-center">
 								<div class="col-12 col-lg-11 col-md-10 d-flex justify-content-between align-items-center">
 									<span>
@@ -63,7 +63,7 @@ else if (TempData["Success"] != null)
 									</span>
 									<span class="text-muted ms-2">@cmt.CreatedDate.ToString()</span>
 								</div>
-								<div class="col-12 col-lg-1 d-flex flex-column flex-lg-row align-items-end justify-content-end mt-2 mt-lg-0">
+								<div class="col-12 col-lg-1 col-md-2 d-flex flex-column flex-lg-row align-items-end justify-content-end mt-lg-0">
 									<div class="dropdown">
 										<button class="btn btn-link dropdown-toggle" type="button" id="commentActionsDropdown-@cmt.Id" data-bs-toggle="dropdown" aria-expanded="false">
 											More

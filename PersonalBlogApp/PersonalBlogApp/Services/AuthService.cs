@@ -10,6 +10,7 @@ namespace PersonalBlogApp.Services
         Task<ApiResponse> Login(LoginRequest request);
         Task<ApiResponse> Register(UserRequest request);
         Task<ApiResponse> Logout();
+        Task<string> ChangePassword(ChangePasswordRequest request);
         Task<ApiResponse> AccessDenied();
     }
 
@@ -101,6 +102,35 @@ namespace PersonalBlogApp.Services
                 Result = "Logout successfully"
             };
         }
+
+        public async Task<string> ChangePassword(ChangePasswordRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(request.userId);
+            if (user == null)
+            {
+                throw new Exception("This user does not exist");
+            }
+
+            if(request.OldPassword == request.NewPassword)
+            {
+                throw new Exception("The new password must be different from old password");
+            }
+            else if (request.NewPassword != request.ConfirmNewPassword)
+            {
+                throw new Exception("The new password and confirmation password do not match");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user,request.OldPassword,request.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                throw new Exception($"Password change failed: {errors}");
+            }
+
+            return "Password changed successfully";
+        }
+
 
         public async Task<ApiResponse> AccessDenied()
         {

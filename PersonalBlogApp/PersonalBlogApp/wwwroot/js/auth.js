@@ -82,3 +82,26 @@ async function Logout() {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.querySelector('input[type="file"][name="AvatarUrl"]');
+    const displayDiv = document.getElementById('display-avatar');
+
+    fileInput.addEventListener('change', function (event) {
+        displayDiv.innerHTML = ""; 
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add("rounded-circle");
+                img.style.maxWidth = "150px";
+                img.style.maxHeight = "150px";
+                img.style.marginTop = "10px";
+                displayDiv.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});

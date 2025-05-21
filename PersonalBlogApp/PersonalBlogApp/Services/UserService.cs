@@ -85,8 +85,6 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-
-
         public async Task<DetailUserResponse> GetUser(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);

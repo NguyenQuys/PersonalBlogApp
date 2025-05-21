@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Buffers;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,13 @@ namespace PersonalBlogApp.Controllers
         public async Task<IActionResult> Users(string searchValue, string roleValue) // send params form search and filter 
         {
             var getAllUsers = await _userService.GetAllAsync(searchValue, roleValue);
+            return View(getAllUsers);
+        }
+
+        [HttpGet("UsersWithDatatable")]
+        public async Task<IActionResult> UsersWithDatatable()
+        {
+            var getAllUsers = await _userService.GetAllAsync(null, null);
             return View(getAllUsers);
         }
 

@@ -20,23 +20,34 @@
             const createdDate = new Date(result.result.createdDate).toLocaleString();
 
             const li = document.createElement('li');
-            li.className = 'list-group-item';
+            li.className = 'list-group-item border-success';
             li.id = `comment-${result.result.id}`
-            li.innerHTML = `<div class="row">
-                                <div class="col-lg-10 col-md-10 col-sm-10 d-flex justify-content-between align-items-center">
+            li.innerHTML = `<div class="row align-items-center">
+                                <div class="col-12 col-lg-11 col-md-10 d-flex justify-content-between align-items-center">
                                     <span><strong class="username-response">${userName}</strong>: ${commentContent}</span>
                                     <span class="text-muted ms-2">${createdDate}</span>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 d-flex justify-content-end">
-                                        <form method="post" action="/Comments/Delete">
-                                            <input type="hidden" name="blogId" value="${result.result.blogId}">                                            
-                                            <input type="hidden" name="commentId" value="${result.result.id}">
-                                            <button type="submit" class="btn btn-link">Delete</button>
-                                        </form>
-                                        <span class="mx-3"> </span>
-                                    <button type="button" onclick="OpenReplyInput('${result.result.id}', '${commentContent}')" class="btn btn-link">Reply</button>
+                                <div class="col-12 col-lg-1 col-md-2 d-flex flex-column flex-lg-row align-items-end justify-content-end mt-lg-0">
+                                    <div class="dropdown">
+										<button class="btn btn-link dropdown-toggle" type="button" id="commentActionsDropdown-${result.result.id}" data-bs-toggle="dropdown" aria-expanded="false">
+											More
+										</button>
+										<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="commentActionsDropdown-${result.result.id}">
+											<li>
+												<form action="/Comments/Delete" method="post" class="dropdown-item p-0 m-0">
+													<input type="hidden" name="blogId" value="${result.result.blogId}" />
+													<input type="hidden" name="commentId" value="${result.result.id}" />
+													<button type="submit" class="btn btn-link w-100 text-start text-black text-decoration-none">Delete</button>
+												</form>
+											</li>
+											<li>
+												<button type="button" onclick="OpenReplyInput('${result.result.id}', '${result.result.content}')" class="dropdown-item">Reply</button>
+											</li>
+										</ul>
+									</div>
                                 </div>
                             </div>
+                            <ul class="list-group mt-2 ms-4" id="reply-list-${result.result.id}"></ul>
                             `
 
             const commentList = document.getElementById('comment-list');

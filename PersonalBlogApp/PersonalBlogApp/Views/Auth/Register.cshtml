@@ -28,11 +28,18 @@
 			<input asp-for="PasswordHash" type="password" class="form-control" placeholder="Enter Password">
 			<span asp-validation-for="PasswordHash" class="text-danger"></span>
 		</div>
-		<div class="mb-3">
-			<label asp-for="AvatarUrl" class="form-label">Avatar</label>
-			<input asp-for="AvatarUrl" type="file" class="form-control">
-			<span asp-validation-for="AvatarUrl" class="text-danger"></span>
+		<div>
+			<div class="mb-3">
+				<label asp-for="AvatarUrl" class="form-label">Avatar</label>
+				<input asp-for="AvatarUrl" type="file" class="form-control" accept=".png,.webp,.jpg,.jpeg">
+				<span asp-validation-for="AvatarUrl" class="text-danger"></span>
+			</div>
 		</div>
-		<button type="submit" class="btn btn-primary">Sign Up</button>
+		<div class="mb-3">
+			<div id="display-avatar" class="d-flex justify-content-center"></div>
+		</div>
+		<div class="mb-3">
+			<button type="submit" class="btn btn-primary w-100">Sign Up</button>
+		</div>
 	</form>
 </div>
