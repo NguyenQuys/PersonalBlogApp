@@ -1,5 +1,9 @@
 **/bin/
 **/obj/
 **/.vs/
-**/images/
-**/Migrations/
+PersonalBlogApp/PersonalBlogApp/Migrations/20250519023131_update1.cs
+PersonalBlogApp/PersonalBlogApp/Migrations/20250519023131_update1.Designer.cs
+PersonalBlogApp/PersonalBlogApp/Migrations/20250520062446_update2.cs
+PersonalBlogApp/PersonalBlogApp/Migrations/20250520062446_update2.Designer.cs
+PersonalBlogApp/PersonalBlogApp/Migrations/20250520102859_update3.cs
+PersonalBlogApp/PersonalBlogApp/Migrations/20250520102859_update3.Designer.cs

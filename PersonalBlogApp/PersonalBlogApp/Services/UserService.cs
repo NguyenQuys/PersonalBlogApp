@@ -31,7 +31,7 @@ namespace PersonalBlogApp.Services
         public async Task DeleteAsync(string id)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
-            var result = await _userManager.DeleteAsync(existingUser);
+            await _userManager.DeleteAsync(existingUser);
         }
 
         public async Task<IEnumerable<DetailUserResponse>> GetAllAsync(string? searchValue, string? roleValue)

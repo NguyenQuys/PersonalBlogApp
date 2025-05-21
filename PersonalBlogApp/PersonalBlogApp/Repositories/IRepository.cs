@@ -45,5 +45,4 @@ namespace PersonalBlogApp.Repositories
             await _context.SaveChangesAsync();
         }
     }
-
 }

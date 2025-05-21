@@ -45,14 +45,26 @@ namespace PersonalBlogApp.Repositories
 
         public override async Task<Blog> GetByIdAsync(Guid id)
         {
-            return await _dbSet.Include(m => m.Comments)
-                                .ThenInclude(m=>m.User)
-                                .FirstOrDefaultAsync(m => m.Id == id);
+            var blog = await _dbSet
+                .Include(m => m.Comments)
+                    .ThenInclude(c => c.User)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (blog != null && blog.Comments != null)
+            {
+                blog.Comments = blog.Comments
+                    .OrderByDescending(c => c.CreatedDate)
+                    .ToList();
+            }
+
+            return blog;
         }
 
         public async Task<IEnumerable<Blog>> GetBlogs()
         {
-            return await _dbSet.Where(m=>m.IsPublic).ToListAsync();
+            return await _dbSet.Where(m=>m.IsPublic)
+                               .OrderByDescending(m => m.CreatedDate)
+                               .ToListAsync();
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Scripting;
 
 namespace PersonalBlogApp.Controllers
 {
+    [Authorize]
     public class BlogsController : Controller
     {
         private readonly IBlogService _blogService;

@@ -15,7 +15,7 @@
         const result = await response.json();
         if (result.status === 201) {
 
-            const userName = "You";
+            const userName = result.result.username;
             const commentContent = result.result.content;
             const createdDate = new Date(result.result.createdDate).toLocaleString();
 
@@ -39,7 +39,19 @@
                             </div>
                             `
 
-            document.getElementById('comment-list').appendChild(li);
+            const commentList = document.getElementById('comment-list');
+            if (commentList.firstChild) {
+                commentList.insertBefore(li, commentList.firstChild);
+            } else {
+                commentList.appendChild(li);
+            }
+
+            const br = document.createElement('br');
+            if (li.nextSibling) {
+                commentList.insertBefore(br, li.nextSibling);
+            } else {
+                commentList.appendChild(br);
+            }
 
             document.getElementById('comment-input').value = '';
 

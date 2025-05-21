@@ -1,16 +1,9 @@
 ﻿@model IEnumerable<PersonalBlogApp.Models.Blog>
 @using System.Security.Claims
+@using PersonalBlogApp.Helpers;
 
 @{
 	ViewData["Title"] = "GetAll";
-}
-
-@functions {
-	public static string StripHtml(string input)
-	{
-		if (string.IsNullOrEmpty(input)) return string.Empty;
-		return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty);
-	}
 }
 
 <h1>Blogs</h1>
@@ -80,6 +73,9 @@
 			<th>
 				@Html.DisplayNameFor(model => model.Priority)
 			</th>
+			<th>
+				Action
+			</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -91,8 +87,9 @@
 					@Html.DisplayFor(modelItem => item.Title)
 				</td>
 				<td>
-					<span class="truncate-3-lines">@StripHtml(item.Content)</span>
+					<span class="truncate-3-lines">@HtmlUtils.StripHtml(item.Content)</span>
 				</td>
+
 				<td>
 					@Html.DisplayFor(modelItem => item.CreatedDate)
 				</td>
@@ -103,17 +100,24 @@
 					@Html.DisplayFor(modelItem => item.Priority)
 				</td>
 				<td>
-					@if (item.UserId.Equals(currentUserId))
-					{
-						<a class="btn btn-primary me-2 my-1" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-					}
-					<a class="btn btn-success me-2 my-1" asp-action="Details" asp-route-id="@item.Id">Details</a>
-					@if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
-					{
-						<a class="btn btn-danger my-1" onclick="DeleteBlog('@item.Id')">Delete</a>
-					}
-				</td>
+					<div class="dropdown">
+						<button class="btn btn-link dropdown-toggle" type="button" id="blogActionsDropdown-@item.Id" data-bs-toggle="dropdown" aria-expanded="false">
+							More
+						</button>
+						<div class="dropdown-menu" aria-labelledby="blogActionsDropdown-@item.Id">
+							@if (item.UserId.Equals(currentUserId))
+							{
+								<a class="me-2 my-1 dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+							}
 
+							<a class="me-2 my-1 dropdown-item" asp-action="Details" asp-route-id="@item.Id">Details</a>
+							@if (item.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
+							{
+								<a style="cursor:pointer" class="my-1 dropdown-item" onclick="DeleteBlog('@item.Id')">Delete</a>
+							}
+						</div>
+					</div>
+				</td>
 			</tr>
 		}
 	</tbody>

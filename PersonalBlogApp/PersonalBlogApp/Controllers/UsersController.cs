@@ -73,7 +73,7 @@ namespace PersonalBlogApp.Controllers
         public async Task<ActionResult> Delete(string id)
         {
             await _userService.DeleteAsync(id);
-            return Ok();
+            return Json("Deleted successfully");
         }
     }
 }
