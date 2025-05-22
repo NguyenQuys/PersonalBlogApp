@@ -20,5 +20,18 @@ namespace PersonalBlogApp.Repositories
             return await _dbSet.Include(m => m.User)
                                .FirstOrDefaultAsync(m => m.Id == entity.Id);
         }
+
+        public override async Task DeleteAsync(Guid id)
+        {
+            var parrentComment = await _dbSet.Include(c => c.Replies)
+                                             .FirstOrDefaultAsync(c => c.Id == id);
+
+            if(parrentComment != null)
+            {
+                _dbSet.RemoveRange(parrentComment.Replies);
+                _dbSet.Remove(parrentComment);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

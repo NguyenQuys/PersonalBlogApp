@@ -32,11 +32,30 @@ body {
 }
 
 .unstyled-link {
-    color: inherit !important;
-    text-decoration: none !important;
+    color: inherit;
+    text-decoration: none;
 }
 
 .unstyled-link:hover, .unstyled-link:focus {
-    color: inherit !important;
-    text-decoration: none !important;
+    color: inherit;
+    text-decoration: none;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/*td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}*/
+
+.marker {
+    background-color: yellow;
+    color: black;
+    padding: 2px 5px;
+    border-radius: 3px;
 }

@@ -16,10 +16,7 @@ namespace PersonalBlogApp.Controllers
     {
         private readonly IBlogService _blogService;
 
-        public BlogsController(IBlogService blogService)
-        {
-            _blogService = blogService;
-        }
+        public BlogsController(IBlogService blogService) => _blogService = blogService;
 
         // get all blogs for user
         public async Task<IActionResult> Index()
@@ -29,14 +26,33 @@ namespace PersonalBlogApp.Controllers
         }
 
         // get all blogs for admin
+        //[HttpGet("Blogs/Manage")]
+        //public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (string.IsNullOrEmpty(userId))
+        //    {
+        //        TempData["Error"] = "User is not authenticated.";
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    var result = await _blogService.SortAndFilter(sortValue, priorityValue, userId);
+        //    return View(result);
+        //}
+
         [HttpGet("Blogs/Manage")]
-        public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
+        public async Task<IActionResult> Blogs(PaginationRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = await _blogService.SortAndFilter(sortValue, priorityValue, userId);
-            return View(result);
-        }
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Error"] = "User is not authenticated.";
+                return RedirectToAction("Index");
+            }
 
+            var result = await _blogService.GetAllAsync(draw, page, pageSize, userId);
+
+        }
         // go to add blog view
         [HttpGet]
         public IActionResult Create() => View();

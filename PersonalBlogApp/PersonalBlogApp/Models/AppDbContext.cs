@@ -41,7 +41,7 @@ namespace PersonalBlogApp.Models
                 HasOne(r => r.Parent)
                 .WithMany(c => c.Replies)
                 .HasForeignKey(c => c.ParentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
