@@ -25,7 +25,7 @@
 			<a class="btn btn-primary" asp-action="Create">Create New</a>
 		</p>
 	</div>
-	<div  class="col-3">
+	<div class="col-3">
 		<form asp-action="Blogs" method="get">
 			<div class="d-flex align-items-end">
 				<label for="priorityValue" class="form-label me-2">Priority: </label>
@@ -49,7 +49,7 @@
 			<th>User post</th>
 			<th>Prioriry</th>
 			<th>Created date</th>
-			@* <th>Actions</th> *@
+			<th>Actions</th>
 		</tr>
 	</thead>
 </table>
@@ -59,21 +59,55 @@
 @section Scripts {
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script>
-		$(document).ready(function () {
+				$(document).ready(function () {
 			$('#blogsTable').DataTable({
 				processing: true,
 				serverSide: true,
-				ajax:{
-					url:'/Blogs/Manage',
-					type:'GET'
+				ajax: {
+					url: '/Blogs/Manage',
+					type: 'GET'
 				},
-				columns:[
-					{data: 'title'},
-					{data: 'content'},
-					{data: 'userId'},
-					{data: 'priority'},
-					{data: 'createdDate'},
-					// {data: }
+				columns: [
+					{ data: 'title' },
+					{ data: 'content' },
+					{ data: 'userId' },
+					{ data: 'priority' },
+					{ data: 'createdDate' },
+					{
+						data: null,
+						orderable: false,
+						render: function (data, type, row) {
+							let currentUserId = '@currentUserId';
+							let isAdmin = '@User.IsInRole("Admin")'.toLowerCase() === 'true';
+
+							let dropdownHtml = `
+								<div class="dropdown">
+									<button class="btn btn-link dropdown-toggle" type="button" id="blogActionsDropdown-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
+										More
+									</button>
+									<ul class="dropdown-menu" aria-labelledby="blogActionsDropdown-${row.id}">
+							`;
+
+							if (row.userId === currentUserId) {
+								dropdownHtml += `
+									<li><a class="dropdown-item" href="/Blogs/Edit/${row.id}">Edit</a></li>
+								`;
+							}
+
+							dropdownHtml += `
+								<li><a class="dropdown-item" href="/Blogs/${row.id}">Details</a></li>
+							`;
+
+							if (row.userId === currentUserId || isAdmin) {
+								dropdownHtml += `
+									<li><a class="dropdown-item" style="cursor:pointer" onclick="DeleteBlog('${row.id}')">Delete</a></li>
+								`;
+							}
+
+							dropdownHtml += `</ul></div>`;
+							return dropdownHtml;
+						}
+					}
 				]
 			});
 		});

@@ -1,14 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using NuGet.Versioning;
 using PersonalBlogApp.Models;
+using PersonalBlogApp.Requests;
+using PersonalBlogApp.Responses;
 
 namespace PersonalBlogApp.Repositories
 {
     public interface IBlogRepository : IGenericsRepository<Blog>
     {
         Task<IEnumerable<Blog>> GetBlogs();
-        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue, string userId);
+        //Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue, string userId);
+        Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request);
     }
 
     public class BlogRepository : GenericsRepository<Blog>, IBlogRepository
@@ -17,31 +21,31 @@ namespace PersonalBlogApp.Repositories
         {
         }
 
-        public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue, string userId)
-        {
-            var query = _dbSet.AsQueryable();
+        //public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue, string userId)
+        //{
+        //    var query = _dbSet.AsQueryable();
 
-            if (prioriyValue != 0)
-            {
-                query = query.Where(m => m.Priority == prioriyValue);
-            }
+        //    if (prioriyValue != 0)
+        //    {
+        //        query = query.Where(m => m.Priority == prioriyValue);
+        //    }
 
-            if (string.IsNullOrEmpty(sortValue) || sortValue.Equals("newest"))
-            {
-                query = query.OrderByDescending(m => m.CreatedDate);
-            }
-            else if (sortValue.Equals("oldest"))
-            {
-                query = query.OrderBy(m => m.CreatedDate);
-            }
+        //    if (string.IsNullOrEmpty(sortValue) || sortValue.Equals("newest"))
+        //    {
+        //        query = query.OrderByDescending(m => m.CreatedDate);
+        //    }
+        //    else if (sortValue.Equals("oldest"))
+        //    {
+        //        query = query.OrderBy(m => m.CreatedDate);
+        //    }
 
-            if (userId != null)
-            {
-                query = query.Where(m=>m.UserId == userId);
-            }
+        //    if (userId != null)
+        //    {
+        //        query = query.Where(m=>m.UserId == userId);
+        //    }
 
-            return await query.ToListAsync();
-        }
+        //    return await query.ToListAsync();
+        //}
 
         public override async Task<Blog> GetByIdAsync(Guid id)
         {
@@ -65,6 +69,35 @@ namespace PersonalBlogApp.Repositories
             return await _dbSet.Where(m=>m.IsPublic)
                                .OrderByDescending(m => m.CreatedDate)
                                .ToListAsync();
+        }
+
+        public async Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.Searchvalue))
+            {
+                query = query.Where(m => m.Title.Contains(request.Searchvalue) || m.Content.Contains(request.Searchvalue));
+            }
+
+            int recordsTotal = await query.CountAsync();
+
+            int page = request.Index > 0 ? request.Index : 1;
+            int pageSize = request.PageSize > 0 ? request.PageSize : 10;
+
+            var data = await query
+                .OrderByDescending(m => m.CreatedDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginationResponse<Blog>
+            {
+                Draw = request.Draw,
+                RecordsFiltered = recordsTotal,
+                RecordsTotal = recordsTotal,
+                Data = data
+            };
         }
     }
 }

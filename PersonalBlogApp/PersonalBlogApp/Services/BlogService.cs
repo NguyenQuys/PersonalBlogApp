@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Repositories;
 using PersonalBlogApp.Requests;
+using PersonalBlogApp.Responses;
 
 namespace PersonalBlogApp.Services
 {
     public interface IBlogService : IGenericsService<Blog> {
 
-        Task<IEnumerable<Blog>> GetBlogsPagination(PaginationRequest request);
+        Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request);
         Task<Blog> CreateAsync(BlogRequest request);
         Task<Blog> UpdateAsync(BlogRequest request);
         //Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue,string userId);
@@ -57,9 +58,10 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-        public Task<IEnumerable<Blog>> GetBlogsPagination(PaginationRequest request)
+        public async Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request)
         {
-            throw new NotImplementedException();
+            var result = await _blogRepository.GetBlogsPagination(request);
+            return result;
         }
 
         public async Task<Blog> GetByIdAsync(Guid id)
