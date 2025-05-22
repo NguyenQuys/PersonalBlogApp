@@ -3,8 +3,10 @@
 @using PersonalBlogApp.Helpers;
 
 @{
-	ViewData["Title"] = "GetAll";
+	ViewData["Title"] = "Blogs";
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
 
 <h1>Blogs</h1>
 @{
@@ -19,14 +21,14 @@
 		<div class="alert alert-success">@TempData["Success"]</div>
 	}
 }
-<div class="row">
+<div id="customFilterRow" class="row align-items-end mb-4">
 	<div class="col-6">
-		<p>
+		<p class="mb-0">
 			<a class="btn btn-primary" asp-action="Create">Create New</a>
 		</p>
 	</div>
-	<div class="col-6">
-		<form asp-action="Index" method="get">
+	<div  class="col-6">
+		<form asp-action="Blogs" method="get">
 			<div class="row align-items-end">
 				<div class="col">
 					<label for="sortValue" class="form-label">Sort by</label>
@@ -53,51 +55,36 @@
 			</div>
 		</form>
 	</div>
-
 </div>
-<table class="table">
+<table id="blogsTable" class="table table-hover">
 	<thead>
 		<tr>
-			<th>
-				@Html.DisplayNameFor(model => model.Title)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Content)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.CreatedDate)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.User)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Priority)
-			</th>
-			<th>
-				Action
-			</th>
-			<th></th>
+			<th>Title</th>
+			<th>Content</th>
+			<th>User post</th>
+			<th>Prioriry</th>
+			<th>Created date</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		@foreach (var item in Model)
 		{
-			<tr>
+			<tr class="align-middle">
 				<td>
 					@Html.DisplayFor(modelItem => item.Title)
 				</td>
-				<td>
+				<td >
 					<span class="truncate-3-lines">@HtmlUtils.StripHtml(item.Content)</span>
-				</td>
-
-				<td>
-					@Html.DisplayFor(modelItem => item.CreatedDate)
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.User.UserName)
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.Priority)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.CreatedDate)
 				</td>
 				<td>
 					<div class="dropdown">
@@ -123,3 +110,14 @@
 	</tbody>
 </table>
 <script src="/js/blog.js" asp-append-version="true"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/js/user.js" asp-append-version="true"></script>
+@section Scripts {
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('#blogsTable').DataTable();
+		});
+
+	</script>
+}

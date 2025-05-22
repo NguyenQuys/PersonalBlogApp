@@ -52,7 +52,7 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login() => View();
+        public  IActionResult Login() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -80,7 +80,7 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangePassword()
+        public IActionResult ChangePassword()
         {
             return View();
         }
@@ -109,7 +109,7 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> AccessDenied()
+        public IActionResult AccessDenied()
         {
             //var result = await _authService.AccessDenied();
             //return Json(result);

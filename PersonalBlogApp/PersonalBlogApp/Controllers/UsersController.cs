@@ -30,13 +30,6 @@ namespace PersonalBlogApp.Controllers
             return View(getAllUsers);
         }
 
-        [HttpGet("UsersWithDatatable")]
-        public async Task<IActionResult> UsersWithDatatable()
-        {
-            var getAllUsers = await _userService.GetAllAsync(null, null);
-            return View(getAllUsers);
-        }
-
         [HttpGet("Users/{id}")]
         public async Task<IActionResult> Details(string id)
         {

@@ -30,6 +30,22 @@ else if (TempData["Success"] != null)
 			<div class="ms-auto align-self-end">
 				<h5 class="text-muted mb-0">@Model.CreatedDate</h5>
 			</div>
+			<div class="dropdown align-self-end">
+				<button class="btn btn-link dropdown-toggle pb-0" type="button" id="blogActionsDropdown-@Model.Id" data-bs-toggle="dropdown" aria-expanded="false">
+					More
+				</button>
+				<div class="dropdown-menu" aria-labelledby="blogActionsDropdown-@Model.Id">
+					@if (Model.UserId.Equals(currentUserId))
+					{
+						<a class="me-2 my-1 dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+					}
+
+					@if (@Model.UserId.Equals(currentUserId) || User.IsInRole("Admin"))
+					{
+						<a style="cursor:pointer" class="my-1 dropdown-item" onclick="DeleteBlog('@Model.Id')">Delete</a>
+					}
+				</div>
+			</div>
 		</div>
 		<div class="my-4">
 			<h4>@Model.Title</h4>
@@ -59,7 +75,7 @@ else if (TempData["Success"] != null)
 							<div class="row align-items-center">
 								<div class="col-12 col-lg-11 col-md-10 d-flex justify-content-between align-items-center">
 									<span>
-										<img class="my-auto" src="@cmt.User.AvatarUrl" width="20" height="20" />
+										<img class="my-auto rounded-circle border border-primary" src="@cmt.User.AvatarUrl" width="20" height="20" />
 										<strong class="username-response">@cmt.User?.UserName</strong>: @cmt.Content
 									</span>
 									<span class="text-muted ms-2">@cmt.CreatedDate.ToString()</span>
@@ -100,7 +116,7 @@ else if (TempData["Success"] != null)
 									{
 										<li class="list-group-item">
 											<div>
-												<img src="@reply.User.AvatarUrl" class="rounded-circle" height="20" width="20" />
+												<img src="@reply.User.AvatarUrl" class="rounded-circle border border-primary" height="20" width="20" />
 												<strong class="username-response">@reply.User?.UserName</strong>:
 												@reply.Content
 												@if (reply.UserId == currentUserId || User.IsInRole("Admin"))
@@ -124,11 +140,13 @@ else if (TempData["Success"] != null)
 			}
 			else
 			{
+				<div id="noComment" class="alert alert-info">No comments yet.</div>
 				<ul class="list-group" id="comment-list"></ul>
 			}
 		</div>
 	</div>
 </div>
+<script src="/js/blog.js" asp-append-version="true"></script>
 <script src="~/js/comment.js" asp-append-version="true"></script>
 
 

@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<PersonalBlogApp.Responses.DetailUserResponse>
+@using System.Security.Claims
 
 @{
 	ViewData["Title"] = "Users";
+	var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 
 <h1>Users</h1>
 @if (TempData["SuccessMessage"] != null)
@@ -12,54 +15,21 @@
 	</div>
 }
 
-<div class="row">
-	<div class="col-8">
-		<form asp-action="Index" class="mb-3" method="get">
-			<div class="input-group">
-				<input type="text" name="searchValue" class="form-control" placeholder="Input username or email to search...">
-				<button class="btn btn-primary" type="submit">Search</button>
-			</div>
-		</form>
-	</div>
-	<div class="col-4">
-		<form method="get" asp-action="Index">
-			<select name="roleValue" class="form-select" onchange="this.form.submit()">
-				<option disabled selected>Choose role</option>
-				<option value="admin">Admin</option>
-				<option value="user">User</option>
-			</select>
-		</form>
-
-	</div>
-</div>
-
-<table class="table" class="d-flex align-items-center justify-content-center">
+<table id="personTable" class="table table-hover">
 	<thead>
 		<tr>
-			<th>
-				@Html.DisplayNameFor(model => model.User.Id)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.User.UserName)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.User.Email)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.UserRoles)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.User.Avatar)
-			</th>
-			<th>
-				Action
-			</th>
+			<th>Id</th>
+			<th>UserName</th>
+			<th>Email</th>
+			<th>UserRoles</th>
+			<th>Avatar</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		@foreach (var item in Model)
 		{
-			<tr>
+			<tr class="align-middle">
 				<td>
 					@Html.DisplayFor(modelItem => item.User.Id)
 				</td>
@@ -71,23 +41,47 @@
 				</td>
 				<td>
 					@{
-						foreach(var role in item.UserRoles)
+						foreach (var role in item.UserRoles)
 						{
 							<p>@role</p>
 						}
 					}
 				</td>
 				<td>
-					<img src="@item.User.Avatar" width="50" height="50" />
+					<img class="rounded-circle" src="@item.User.Avatar" alt="Avatar" width="70" height="70" />
 				</td>
 				<td>
-					<div>
-						<a class="btn btn-primary mx-2" asp-controller="Users" asp-action="Details" asp-route-id="@item.User.Id">Detail</a>
-						<a class="btn btn-danger mx-2" onclick="DeleteUser('@item.User.Id')">Remove</a>
+					<div class="dropdown">
+						<button class="btn btn-link dropdown-toggle" type="button" id="userActionsDropdown-@item.User.Id" data-bs-toggle="dropdown" aria-expanded="false">
+							More
+						</button>
+						<div class="dropdown-menu" aria-labelledby="userActionsDropdown-@item.User.Id">
+							@if (item.User.Id.Equals(currentUserId))
+							{
+								<a class="me-2 my-1 dropdown-item" asp-action="Edit" asp-route-id="@item.User.Id">Edit</a>
+							}
+
+							<a class="me-2 my-1 dropdown-item" asp-action="Details" asp-route-id="@item.User.Id">Details</a>
+							@if (item.User.Id.Equals(currentUserId) || User.IsInRole("Admin"))
+							{
+								<a style="cursor:pointer" class="my-1 dropdown-item" onclick="DeleteBlog('@item.User.Id')">Delete</a>
+							}
+						</div>
 					</div>
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
-<script src="~/js//user.js" asp-append-version="true"></script>
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/js/user.js" asp-append-version="true"></script>
+@section Scripts {
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('#personTable').DataTable();
+		});
+	</script>
+}
+

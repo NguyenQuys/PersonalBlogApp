@@ -39,10 +39,8 @@ namespace PersonalBlogApp.Controllers
 
         // go to add blog view
         [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
+        
 
         // add blog
         [HttpPost]

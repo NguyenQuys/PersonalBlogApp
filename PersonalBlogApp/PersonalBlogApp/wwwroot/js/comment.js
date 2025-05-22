@@ -14,6 +14,7 @@
 
         const result = await response.json();
         if (result.status === 201) {
+            $('#noComment').remove();
 
             const userName = result.result.username;
             const commentContent = result.result.content;

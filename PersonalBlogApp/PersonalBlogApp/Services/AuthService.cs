@@ -11,7 +11,6 @@ namespace PersonalBlogApp.Services
         Task<ApiResponse> Register(UserRequest request);
         Task<ApiResponse> Logout();
         Task<string> ChangePassword(ChangePasswordRequest request);
-        Task<ApiResponse> AccessDenied();
     }
 
     public class AuthService : IAuthService
@@ -129,16 +128,6 @@ namespace PersonalBlogApp.Services
             }
 
             return "Password changed successfully";
-        }
-
-
-        public async Task<ApiResponse> AccessDenied()
-        {
-            return new ApiResponse
-            {
-                Status = 401,
-                Result = "You don't have permission"
-            };
         }
 
         private async Task<string> SaveImageFileAsync(IFormFile file)

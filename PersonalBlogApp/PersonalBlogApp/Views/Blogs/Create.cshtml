@@ -4,7 +4,9 @@
 @{
 	ViewData["Title"] = "CreateAsync";
 }
-
+<div class="mb-2">
+	<a class="my-2" href="javascript:history.back()">Back to List</a>
+</div>
 <h1>Create new blog</h1>
 @{
 	string userId = "";
@@ -15,6 +17,7 @@
 }
 
 <hr />
+
 <div class="row">
 	<form asp-action="Create" method="post">
 		@Html.AntiForgeryToken()
@@ -56,10 +59,6 @@
 			<input style="float:right" type="submit" value="Create" class="btn btn-primary my-2" />
 		</div>
 	</form>
-</div>
-
-<div>
-	<a class="my-2" href="javascript:history.back()">Back to List</a>
 </div>
 
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
