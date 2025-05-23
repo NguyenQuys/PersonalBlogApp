@@ -43,24 +43,11 @@ namespace PersonalBlogApp.Controllers
         //    return View(result);
         //}
         [HttpGet]
-        public async Task<IActionResult> AAA() => View();
-
-        //[HttpGet("Blogs/Manage")]
-        //public async Task<IActionResult> Blogs(PaginationRequest request)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (string.IsNullOrEmpty(userId))
-        //    {
-        //        TempData["Error"] = "User is not authenticated.";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    var result = await _blogService.GetBlogsPagination(request);
-        //    return Json(result);
-        //}
+        [Authorize(Policy = "CanViewAllBlogs")]
+        public async Task<IActionResult> Manage() => View();
 
         [HttpGet]
-        public async Task<IActionResult> Manage()
+        public async Task<IActionResult> GetBlogsPagination()
         {
             var draw = Request.Query["draw"].FirstOrDefault();
             var start = Request.Query["start"].FirstOrDefault();

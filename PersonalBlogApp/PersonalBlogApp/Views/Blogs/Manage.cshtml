@@ -46,7 +46,6 @@
 		<tr>
 			<th>Title</th>
 			<th>Content</th>
-			<th>User post</th>
 			<th>Prioriry</th>
 			<th>Created date</th>
 			<th>Actions</th>
@@ -59,18 +58,17 @@
 @section Scripts {
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script>
-				$(document).ready(function () {
+			$(document).ready(function () {
 			$('#blogsTable').DataTable({
 				processing: true,
 				serverSide: true,
 				ajax: {
-					url: '/Blogs/Manage',
+					url: '/Blogs/GetBlogsPagination',
 					type: 'GET'
 				},
 				columns: [
 					{ data: 'title' },
 					{ data: 'content' },
-					{ data: 'userId' },
 					{ data: 'priority' },
 					{ data: 'createdDate' },
 					{

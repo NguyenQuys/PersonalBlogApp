@@ -24,10 +24,39 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpGet("Users")]
-        public async Task<IActionResult> Users(string searchValue, string roleValue) // send params form search and filter 
+        public async Task<IActionResult> Users() // send params form search and filter 
         {
-            var getAllUsers = await _userService.GetAllAsync(searchValue, roleValue);
-            return View(getAllUsers);
+            return View();
+        }
+
+        [HttpGet("Users/GetUsersPagination")] 
+        public async Task<IActionResult> GetUsersPagination()
+        {
+            var draw = Request.Query["draw"].FirstOrDefault();
+            var start = Request.Query["start"].FirstOrDefault();
+            var length = Request.Query["length"].FirstOrDefault();
+            var searchValue = Request.Query["search[value]"].FirstOrDefault();
+
+            int drawInt = 0;
+            int.TryParse(draw, out drawInt);
+
+            int skip = 0;
+            int.TryParse(start, out skip);
+
+            int pageSize = 10;
+            int.TryParse(length, out pageSize);
+
+            var request = new PaginationRequest
+            {
+                Draw = drawInt,
+                Index = (skip / pageSize) + 1,
+                PageSize = pageSize,
+                Searchvalue = searchValue,
+            };
+
+            var result = await _userService.GetUsersPagination(request);
+
+            return Json(result);
         }
 
         [HttpGet("Users/{id}")]

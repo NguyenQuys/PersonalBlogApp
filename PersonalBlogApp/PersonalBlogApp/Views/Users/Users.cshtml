@@ -1,5 +1,4 @@
-﻿@model IEnumerable<PersonalBlogApp.Responses.DetailUserResponse>
-@using System.Security.Claims
+﻿@using System.Security.Claims
 
 @{
 	ViewData["Title"] = "Users";
@@ -21,57 +20,10 @@
 			<th>Id</th>
 			<th>UserName</th>
 			<th>Email</th>
-			<th>UserRoles</th>
 			<th>Avatar</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
-	<tbody>
-		@foreach (var item in Model)
-		{
-			<tr class="align-middle">
-				<td>
-					@Html.DisplayFor(modelItem => item.User.Id)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.User.UserName)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.User.Email)
-				</td>
-				<td>
-					@{
-						foreach (var role in item.UserRoles)
-						{
-							<p>@role</p>
-						}
-					}
-				</td>
-				<td>
-					<img class="rounded-circle" src="@item.User.Avatar" alt="Avatar" width="70" height="70" />
-				</td>
-				<td>
-					<div class="dropdown">
-						<button class="btn btn-link dropdown-toggle" type="button" id="userActionsDropdown-@item.User.Id" data-bs-toggle="dropdown" aria-expanded="false">
-							More
-						</button>
-						<div class="dropdown-menu" aria-labelledby="userActionsDropdown-@item.User.Id">
-							@if (item.User.Id.Equals(currentUserId))
-							{
-								<a class="me-2 my-1 dropdown-item" asp-action="Edit" asp-route-id="@item.User.Id">Edit</a>
-							}
-
-							<a class="me-2 my-1 dropdown-item" asp-action="Details" asp-route-id="@item.User.Id">Details</a>
-							@if (item.User.Id.Equals(currentUserId) || User.IsInRole("Admin"))
-							{
-								<a style="cursor:pointer" class="my-1 dropdown-item" onclick="DeleteBlog('@item.User.Id')">Delete</a>
-							}
-						</div>
-					</div>
-				</td>
-			</tr>
-		}
-	</tbody>
 </table>
 
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
@@ -80,7 +32,64 @@
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script>
 		$(document).ready(function () {
-			$('#personTable').DataTable();
+			$('#personTable').DataTable({
+				processing: true,
+				serverSide: true,
+				ajax:{
+					url: 'Users/GetUsersPagination',
+					type: 'GET'
+				},
+						columns: [
+			{ data: 'id' },
+			{ data: 'userName' },
+			{ data: 'email' },
+			{
+				data: 'avatarUrl',
+				render: function(data, type, row) {
+					if (data) {
+						return `<img src="${data}" height="70" width="70" class="rounded-circle border border-primary">`;
+					}
+					return '';
+				}
+			},
+			{
+				data: null,
+				orderable: false,
+				render: function (data, type, row) {
+					let currentUserId = '@currentUserId';
+					let isAdmin = '@User.IsInRole("Admin")'.toLowerCase() === 'true';
+
+					let dropdownHtml = `
+						<div class="dropdown">
+							<button class="btn btn-link dropdown-toggle" type="button" id="userActionsDropdown-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
+								More
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="userActionsDropdown-${row.id}">
+					`;
+
+					if (row.id === currentUserId) {
+						dropdownHtml += `
+							<li><a class="dropdown-item" href="/Users/Edit/${row.id}">Edit</a></li>
+						`;
+					}
+
+					dropdownHtml += `
+						<li><a class="dropdown-item" href="/Users/${row.id}">Details</a></li>
+					`;
+
+					if (row.id === currentUserId || isAdmin) {
+						dropdownHtml += `
+							<li><a class="dropdown-item" style="cursor:pointer" onclick="DeleteUser('${row.id}')">Delete</a></li>
+						`;
+					}
+
+					dropdownHtml += `</ul></div>`;
+					return dropdownHtml;
+				}
+			}
+		]
+
+			});
 		});
 	</script>
 }
