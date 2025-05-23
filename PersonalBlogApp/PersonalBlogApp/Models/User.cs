@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using PersonalBlogApp.Enums;
 
@@ -14,6 +15,8 @@ namespace PersonalBlogApp.Models
 
         [MaxLength(150)]
         public string? AvatarUrl { get; set; }
+
+        [JsonIgnore]
         public ICollection<Blog> Blogs { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }

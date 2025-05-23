@@ -24,6 +24,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Auth/AccessDenied";
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanViewAllBlogs", policy => policy.RequireRole("Admin"));
+});
+
 // Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -74,6 +79,7 @@ if (!app.Environment.IsDevelopment())
 
 // Custom Middleware 
 app.UseExceptionHandling();
+app.UseCurrentUser();
 //
 
 app.UseHttpsRedirection();

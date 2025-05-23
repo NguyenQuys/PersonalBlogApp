@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Repositories;
 using PersonalBlogApp.Requests;
+using PersonalBlogApp.Responses;
 
 namespace PersonalBlogApp.Services
 {
     public interface IBlogService : IGenericsService<Blog> {
 
-        //Task<IEnumerable<Blog>> GetBlogs();
+        Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request);
         Task<Blog> CreateAsync(BlogRequest request);
         Task<Blog> UpdateAsync(BlogRequest request);
-        Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue,string userId);
+        //Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriryValue,string userId);
+
     }
 
     public class BlogService : IBlogService
@@ -32,7 +34,8 @@ namespace PersonalBlogApp.Services
                 Title = request.Title,
                 Content = request.Content,
                 UserId = request.UserId,
-                Priority = request.Priority
+                Priority = request.Priority,
+                IsPublic = request.IsPublic
             };
 
             var result = await _blogRepository.CreateAsync(newBlog);
@@ -55,6 +58,16 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
+        public async Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request)
+        {
+            var result = await _blogRepository.GetBlogsPagination(request);
+            foreach (var user in result.Data)
+            {
+                user.User = await _userManager.FindByIdAsync(user.UserId);
+            }
+            return result;
+        }
+
         public async Task<Blog> GetByIdAsync(Guid id)
         {
             var result = await _blogRepository.GetByIdAsync(id);
@@ -66,37 +79,38 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-        public async Task<IEnumerable<Blog>> SortAndFilter(string sortBy, int priority, string currentUserId)
-        {
-            var currentUser = await _userManager.FindByIdAsync(currentUserId);
-            IList<string> currentUserRoles = new List<string>();
+        //public async Task<IEnumerable<Blog>> SortAndFilter(string sortBy, int priority, string currentUserId)
+        //{
+        //    var currentUser = await _userManager.FindByIdAsync(currentUserId);
+        //    IList<string> currentUserRoles = new List<string>();
 
-            var isCurrentUserAdmin = false;
-            if (currentUser != null)
-            {
-                currentUserRoles = await _userManager.GetRolesAsync(currentUser);
-                if (currentUserRoles.Contains("Admin"))
-                {
-                    isCurrentUserAdmin = true;
-                }
-            }
+        //    var isCurrentUserAdmin = false;
+        //    if (currentUser != null)
+        //    {
+        //        currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+        //        if (currentUserRoles.Contains("Admin"))
+        //        {
+        //            isCurrentUserAdmin = true;
+        //        }
+        //    }
 
-            IEnumerable<Blog> blogs = new List<Blog>();
-            if (isCurrentUserAdmin)
-            {
-                blogs = await _blogRepository.SortAndFilter(sortBy, priority, null);
-            }
-            else
-            {
-                blogs = await _blogRepository.SortAndFilter(sortBy, priority, currentUserId);
-            }
+        //    IEnumerable<Blog> blogs = new List<Blog>();
+        //    if (isCurrentUserAdmin)
+        //    {
+        //        blogs = await _blogRepository.SortAndFilter(sortBy, priority, null);
+        //    }
+        //    else
+        //    {
+        //        blogs = await _blogRepository.SortAndFilter(sortBy, priority, currentUserId);
+        //    }
 
-            foreach (var blog in blogs)
-            {
-                blog.User = await _userManager.FindByIdAsync(blog.UserId);
-            }
-            return blogs;
-        }
+        //    foreach (var blog in blogs)
+        //    {
+        //        blog.User = await _userManager.FindByIdAsync(blog.UserId);
+        //    }
+        //    return blogs;
+        //}
+
 
 
         public async Task<Blog> UpdateAsync(BlogRequest request)

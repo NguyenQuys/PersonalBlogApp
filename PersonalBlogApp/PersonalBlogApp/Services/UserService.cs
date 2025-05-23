@@ -9,6 +9,7 @@ namespace PersonalBlogApp.Services
 {
     public interface IUserService 
     {
+        Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request);
         Task<IEnumerable<DetailUserResponse>> GetAllAsync(string? searchValue, string? roleValue);
         Task<DetailUserResponse> GetUser(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
@@ -85,7 +86,11 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-
+        public async Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request)
+        {
+            var result = await _userRepository.GetUsersPagination(request);
+            return result;
+        }
 
         public async Task<DetailUserResponse> GetUser(string id)
         {

@@ -23,7 +23,9 @@ namespace PersonalBlogApp.Requests
         public string? Avatar { get; set; }
 
         public double? LockoutTime { get; set; }
-        public IFormFile? AvatarUrl { get; set; }
+
+        [Required(ErrorMessage = "Avatar is not empty")]
+        public IFormFile AvatarUrl { get; set; }
 
         [Required(ErrorMessage = "User has at least one role")]
         public IList<string>? Roles { get; set; } = new List<string> { "User" };

@@ -3,17 +3,21 @@
 @{
     ViewData["Title"] = "Details";
 }
+<div class="mb-3">
+    <a class="my-2" href="javascript:history.back()">Back to List</a>
+</div>
+<h1>
+    <img class="rounded-circle" src="@Model.User.Avatar" alt="Avatar" width="70" height="70" />
 
-<h1>Details</h1>
+    @Html.DisplayFor(model => model.User.UserName)
+</h1>
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">
         @TempData["SuccessMessage"]
     </div>
 }
-
 <div>
-    <h4>Users</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -22,23 +26,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.User.Id)
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.UserName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.UserName)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User.Email)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.User.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User.AvatarUrl)
-        </dt>
-        <dd>
-            <img src="@Model.User.Avatar" alt="Avatar" style="width: 100px; height: 100px;" />
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.User.Roles)
@@ -58,8 +50,7 @@
             @(Model.User.LockoutTime == 0 ? "Active" : "Blocked")
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.User.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <a style="float:right" class="btn btn-primary w-25" asp-action="Edit" asp-route-id="@Model?.User.Id">Edit</a> 
+    </div>
 </div>

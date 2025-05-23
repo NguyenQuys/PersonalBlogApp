@@ -10,7 +10,7 @@ namespace PersonalBlogApp.Services
         Task<ApiResponse> Login(LoginRequest request);
         Task<ApiResponse> Register(UserRequest request);
         Task<ApiResponse> Logout();
-        Task<ApiResponse> AccessDenied();
+        Task<string> ChangePassword(ChangePasswordRequest request);
     }
 
     public class AuthService : IAuthService
@@ -102,13 +102,32 @@ namespace PersonalBlogApp.Services
             };
         }
 
-        public async Task<ApiResponse> AccessDenied()
+        public async Task<string> ChangePassword(ChangePasswordRequest request)
         {
-            return new ApiResponse
+            var user = await _userManager.FindByIdAsync(request.userId);
+            if (user == null)
             {
-                Status = 401,
-                Result = "You don't have permission"
-            };
+                throw new Exception("This user does not exist");
+            }
+
+            if(request.OldPassword == request.NewPassword)
+            {
+                throw new Exception("The new password must be different from old password");
+            }
+            else if (request.NewPassword != request.ConfirmNewPassword)
+            {
+                throw new Exception("The new password and confirmation password do not match");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user,request.OldPassword,request.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                throw new Exception($"Password change failed: {errors}");
+            }
+
+            return "Password changed successfully";
         }
 
         private async Task<string> SaveImageFileAsync(IFormFile file)

@@ -1,4 +1,15 @@
 ﻿@model PersonalBlogApp.Requests.LoginRequest
+
+@{
+	ViewData["Title"] = "Login";
+}
+@{
+	if(TempData["Success"] != null)
+	{
+		<div class="alert alert-success">@TempData["Success"]</div>
+	}
+}
+
 <div class="card mx-auto" style="width: 30rem;">
 	<div class="card-body">
 		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -13,13 +24,13 @@
 				<input asp-for="PasswordHash" type="password" class="form-control" placeholder="Enter Password">
 				<span asp-validation-for="PasswordHash" class="text-danger"></span>
 			</div>
-			<button type="submit" class="btn btn-primary">Sign In</button>
+			<button type="submit" class="btn btn-primary w-100">Sign In</button>
 		</form>
 		<div class="loading spinner-border text-primary d-none" role="status">
 			<span class="visually-hidden">Loading...</span>
 		</div>
 		<div class="mt-3 d-flex justify-content-center">
-			<h5>You don't have account??  <span><a asp-action="Register">Sign Up now</a></span></h5>
+			<h5>You don't have account ?  <span><a asp-action="Register">Sign Up now</a></span></h5>
 		</div>
 	</div>
 </div>

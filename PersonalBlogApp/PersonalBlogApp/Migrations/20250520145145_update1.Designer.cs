@@ -12,7 +12,7 @@ using PersonalBlogApp.Models;
 namespace PersonalBlogApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250519023131_update1")]
+    [Migration("20250520145145_update1")]
     partial class update1
     {
         /// <inheritdoc />
@@ -205,6 +205,9 @@ namespace PersonalBlogApp.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Priority")
                         .HasColumnType("int");
 
@@ -246,6 +249,16 @@ namespace PersonalBlogApp.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
