@@ -80,6 +80,11 @@ namespace PersonalBlogApp.Repositories
                 query = query.Where(m => m.Title.Contains(request.Searchvalue) || m.Content.Contains(request.Searchvalue));
             }
 
+            if (!string.IsNullOrEmpty(request.UserId))
+            {
+                query = query.Where(m=>m.UserId.Equals(request.UserId));
+            }
+
             int recordsTotal = await query.CountAsync();
 
             int page = request.Index > 0 ? request.Index : 1;

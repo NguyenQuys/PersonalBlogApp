@@ -79,6 +79,7 @@ if (!app.Environment.IsDevelopment())
 
 // Custom Middleware 
 app.UseExceptionHandling();
+app.UseCurrentUser();
 //
 
 app.UseHttpsRedirection();

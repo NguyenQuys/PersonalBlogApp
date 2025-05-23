@@ -55,7 +55,6 @@ namespace PersonalBlogApp.Controllers
             };
 
             var result = await _userService.GetUsersPagination(request);
-
             return Json(result);
         }
 

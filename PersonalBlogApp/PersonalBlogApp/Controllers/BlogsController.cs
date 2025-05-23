@@ -43,7 +43,6 @@ namespace PersonalBlogApp.Controllers
         //    return View(result);
         //}
         [HttpGet]
-        [Authorize(Policy = "CanViewAllBlogs")]
         public async Task<IActionResult> Manage() => View();
 
         [HttpGet]
@@ -71,6 +70,14 @@ namespace PersonalBlogApp.Controllers
                 Searchvalue = searchValue,
             };
 
+            var userId = HttpContext.Items["UserId"]?.ToString();
+            var isAdmin = HttpContext.Items["IsAdmin"] as bool? ?? false;
+
+            if(!isAdmin)
+            {
+                request.UserId = userId;
+            }
+
             var result = await _blogService.GetBlogsPagination(request);
 
             return Json(result);
@@ -88,7 +95,7 @@ namespace PersonalBlogApp.Controllers
         {
             if(!ModelState.IsValid)
             {
-                return View();
+                return View(); 
             }
 
             var result = await _blogService.CreateAsync(request);

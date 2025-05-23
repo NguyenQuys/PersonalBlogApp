@@ -6,5 +6,7 @@
         public int Index { get; set; } = 1;
         public int PageSize { get; set; } = 2;
         public string? Searchvalue { get; set; }
+
+        public string? UserId {  get; set; }
     }
 }

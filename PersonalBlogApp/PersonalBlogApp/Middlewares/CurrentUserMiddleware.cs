@@ -1,6 +1,5 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
+using PersonalBlogApp.Models;
 
 namespace PersonalBlogApp.Middlewares
 {
@@ -13,18 +12,15 @@ namespace PersonalBlogApp.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, UserManager<User> userManager)
         {
-            var user = context.User;
-            if (user?.Identity?.IsAuthenticated == true)
+            if (context.User.Identity.IsAuthenticated)
             {
-                var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userName = user.Identity.Name;
-                var avatar = user.FindFirst("AvatarUrl")?.Value;
+                var userId = userManager.GetUserId(context.User);
+                var isAdmin = context.User.IsInRole("Admin");
 
-                context.Items["CurrentUserId"] = userId;
-                context.Items["CurrentUserName"] = userName;
-                context.Items["CurrentUserAvatar"] = avatar;
+                context.Items["UserId"] = userId;
+                context.Items["IsAdmin"] = isAdmin;
             }
 
             await _next(context);

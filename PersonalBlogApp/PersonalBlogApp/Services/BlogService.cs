@@ -61,6 +61,10 @@ namespace PersonalBlogApp.Services
         public async Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request)
         {
             var result = await _blogRepository.GetBlogsPagination(request);
+            foreach (var user in result.Data)
+            {
+                user.User = await _userManager.FindByIdAsync(user.UserId);
+            }
             return result;
         }
 
