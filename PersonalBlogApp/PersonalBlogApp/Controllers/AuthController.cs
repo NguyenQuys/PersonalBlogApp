@@ -111,8 +111,6 @@ namespace PersonalBlogApp.Controllers
         [HttpGet]
         public IActionResult AccessDenied()
         {
-            //var result = await _authService.AccessDenied();
-            //return Json(result);
             return View();
         }
     }

@@ -61,7 +61,7 @@
 								@if (User.Identity.IsAuthenticated)
 								{
 									<li class="nav-item">
-										<a asp-action="Details" asp-controller="Users" asp-route-id="@currentUserId"><h5 class="nav-link text-danger mb-0">@currentUser</h5></a>
+										<a class="text-decoration-none" asp-action="Details" asp-controller="Users" asp-route-id="@currentUserId"><h5 class="nav-link text-danger mb-0">@currentUser</h5></a>
 									</li>
 								}
 								<li class="nav-item">

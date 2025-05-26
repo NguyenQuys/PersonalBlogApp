@@ -25,21 +25,6 @@
 			<a class="btn btn-primary" asp-action="Create">Create New</a>
 		</p>
 	</div>
-	<div class="col-3">
-		<form asp-action="Blogs" method="get">
-			<div class="d-flex align-items-end">
-				<label for="priorityValue" class="form-label me-2">Priority: </label>
-				<select name="priorityValue" class="form-select" onchange="this.form.submit()">
-					<option selected>Choose</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-				</select>
-			</div>
-		</form>
-	</div>
 </div>
 <table id="blogsTable" class="table table-hover pt-3">
 	<thead>
@@ -71,43 +56,9 @@
 					{ data: 'title' },
 					{ data: 'content' },
 					{ data: 'priority' },
-					{ data: 'user.userName'},
+					{ data: 'userName'},
 					{ data: 'createdDate' },
-					{
-						data: null,
-						orderable: false,
-						render: function (data, type, row) {
-							let currentUserId = '@currentUserId';
-							let isAdmin = '@User.IsInRole("Admin")'.toLowerCase() === 'true';
-
-							let dropdownHtml = `
-								<div class="dropdown">
-									<button class="btn btn-link dropdown-toggle" type="button" id="blogActionsDropdown-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
-										More
-									</button>
-									<ul class="dropdown-menu" aria-labelledby="blogActionsDropdown-${row.id}">
-							`;
-
-							if (row.userId === currentUserId) {
-								dropdownHtml += `
-									<li><a class="dropdown-item" href="/Blogs/Edit/${row.id}">Edit</a></li>
-								`;
-							}
-
-							dropdownHtml += `
-								<li><a class="dropdown-item" href="/Blogs/${row.id}">Details</a></li>
-							`;
-
-							if (row.userId === currentUserId || isAdmin) {
-								dropdownHtml += `
-									<li><a class="dropdown-item" style="cursor:pointer" onclick="DeleteBlog('${row.id}')">Delete</a></li>
-								`;
-							}
-
-							dropdownHtml += `</ul></div>`;
-							return dropdownHtml;
-						}
-					}
+					{ data: 'actions'}
 				]
 			});
 		});

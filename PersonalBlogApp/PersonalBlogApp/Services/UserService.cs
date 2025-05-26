@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PersonalBlogApp.DTOs;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Repositories;
 using PersonalBlogApp.Requests;
@@ -9,7 +11,7 @@ namespace PersonalBlogApp.Services
 {
     public interface IUserService 
     {
-        Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request);
+        Task<PaginationResponse<UserDTO>> GetUsersPagination(PaginationRequest request);
         Task<IEnumerable<DetailUserResponse>> GetAllAsync(string? searchValue, string? roleValue);
         Task<DetailUserResponse> GetUser(string id);
         Task<ApiResponse> UpdateAsync(UserRequest entity,List<string> rolesSelected);
@@ -86,9 +88,34 @@ namespace PersonalBlogApp.Services
             return result;
         }
 
-        public async Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request)
+        public async Task<PaginationResponse<UserDTO>> GetUsersPagination(PaginationRequest request)
         {
+            request.Searchvalue = request.Searchvalue?.Trim() ?? null;
             var result = await _userRepository.GetUsersPagination(request);
+            foreach (var user in result.Data)
+            {
+                user.Actions = $@"
+                                <div class='dropdown'>
+                                    <button class='btn btn-link dropdown-toggle' type='button' id='userActionsDropdown-{user.Id}' data-bs-toggle='dropdown' aria-expanded='false'>
+                                        More
+                                    </button>
+                                    <ul class='dropdown-menu' aria-labelledby='userActionsDropdown-{user.Id}'>
+                                        <li><a class='dropdown-item' href='/Users/{user.Id}'>Details</a></li>
+";
+                if (user.Id.Equals(request.CurrentUserId) || request.IsAdmin)
+                {
+                    user.Actions += $@"
+                                        <li><a class='dropdown-item' href='/Users/Edit/{user.Id}'>Edit</a></li>
+                                    ";
+                }
+
+                if(user.Id.Equals(request.CurrentUserId) || request.IsAdmin)
+                {
+                    user.Actions += $@"
+                                        <li><a class='dropdown-item' style='cursor:pointer' onclick=DeleteUser('{user.Id}')>Delete</a></li>
+                                    ";
+                }
+            }
             return result;
         }
 

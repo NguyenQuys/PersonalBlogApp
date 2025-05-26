@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using NuGet.Versioning;
+using PersonalBlogApp.DTOs;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
@@ -12,7 +13,7 @@ namespace PersonalBlogApp.Repositories
     {
         Task<IEnumerable<Blog>> GetBlogs();
         //Task<IEnumerable<Blog>> SortAndFilter(string sortValue,int prioriyValue, string userId);
-        Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request);
+        Task<PaginationResponse<BlogDTO>> GetBlogsPagination(PaginationRequest request);
     }
 
     public class BlogRepository : GenericsRepository<Blog>, IBlogRepository
@@ -20,32 +21,6 @@ namespace PersonalBlogApp.Repositories
         public BlogRepository(AppDbContext context) : base(context)
         {
         }
-
-        //public async Task<IEnumerable<Blog>> SortAndFilter(string sortValue, int prioriyValue, string userId)
-        //{
-        //    var query = _dbSet.AsQueryable();
-
-        //    if (prioriyValue != 0)
-        //    {
-        //        query = query.Where(m => m.Priority == prioriyValue);
-        //    }
-
-        //    if (string.IsNullOrEmpty(sortValue) || sortValue.Equals("newest"))
-        //    {
-        //        query = query.OrderByDescending(m => m.CreatedDate);
-        //    }
-        //    else if (sortValue.Equals("oldest"))
-        //    {
-        //        query = query.OrderBy(m => m.CreatedDate);
-        //    }
-
-        //    if (userId != null)
-        //    {
-        //        query = query.Where(m=>m.UserId == userId);
-        //    }
-
-        //    return await query.ToListAsync();
-        //}
 
         public override async Task<Blog> GetByIdAsync(Guid id)
         {
@@ -71,7 +46,7 @@ namespace PersonalBlogApp.Repositories
                                .ToListAsync();
         }
 
-        public async Task<PaginationResponse<Blog>> GetBlogsPagination(PaginationRequest request)
+        public async Task<PaginationResponse<BlogDTO>> GetBlogsPagination(PaginationRequest request)
         {
             var query = _dbSet.AsQueryable();
 
@@ -80,15 +55,15 @@ namespace PersonalBlogApp.Repositories
                 query = query.Where(m => m.Title.Contains(request.Searchvalue) || m.Content.Contains(request.Searchvalue));
             }
 
-            if (!string.IsNullOrEmpty(request.UserId))
+            if (!request.IsAdmin)
             {
-                query = query.Where(m=>m.UserId.Equals(request.UserId));
+                query = query.Where(m => m.UserId.Equals(request.CurrentUserId));
             }
 
             int recordsTotal = await query.CountAsync();
 
-            int page = request.Index > 0 ? request.Index : 1;
-            int pageSize = request.PageSize > 0 ? request.PageSize : 10;
+            int page = request.Start > 0 ? request.Start : 1;
+            int pageSize = request.Length > 0 ? request.Length : 10;
 
             var data = await query
                 .OrderByDescending(m => m.CreatedDate)
@@ -96,12 +71,22 @@ namespace PersonalBlogApp.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new PaginationResponse<Blog>
+            var result = data.Select(item => new BlogDTO
+            {
+                Id = item.Id,
+                Title = item.Title,
+                Content = item.Content,
+                Priority = item.Priority,
+                CreatedDate = item.CreatedDate,
+                UserId = item.UserId
+            }).ToList();
+
+            return new PaginationResponse<BlogDTO>
             {
                 Draw = request.Draw,
                 RecordsFiltered = recordsTotal,
                 RecordsTotal = recordsTotal,
-                Data = data
+                Data = result
             };
         }
     }

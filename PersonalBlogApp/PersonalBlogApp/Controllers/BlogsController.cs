@@ -28,57 +28,27 @@ namespace PersonalBlogApp.Controllers
             return View(result);
         }
 
-        // get all blogs for admin
-        //[HttpGet("Blogs/Manage")]
-        //public async Task<IActionResult> Blogs(string sortValue, int priorityValue)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (string.IsNullOrEmpty(userId))
-        //    {
-        //        TempData["Error"] = "User is not authenticated.";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    var result = await _blogService.SortAndFilter(sortValue, priorityValue, userId);
-        //    return View(result);
-        //}
         [HttpGet]
         public async Task<IActionResult> Manage() => View();
 
         [HttpGet]
-        public async Task<IActionResult> GetBlogsPagination()
+        public async Task<IActionResult> GetBlogsPagination([FromQuery] PaginationRequest request)
         {
-            var draw = Request.Query["draw"].FirstOrDefault();
-            var start = Request.Query["start"].FirstOrDefault();
-            var length = Request.Query["length"].FirstOrDefault();
-            var searchValue = Request.Query["search[value]"].FirstOrDefault();
-
-            int drawInt = 0;
-            int.TryParse(draw, out drawInt);
-
-            int skip = 0;
-            int.TryParse(start, out skip);
-
-            int pageSize = 10; 
-            int.TryParse(length, out pageSize);
-
-            var request = new PaginationRequest
+            var requestToSend = new PaginationRequest
             {
-                Draw = drawInt,
-                Index = (skip / pageSize) + 1,
-                PageSize = pageSize,
-                Searchvalue = searchValue,
+                Draw = request.Draw,
+                Start = (request.Start / request.Length) + 1,
+                Length = request.Length,
+                Searchvalue = request.Searchvalue,
             };
 
             var userId = HttpContext.Items["UserId"]?.ToString();
             var isAdmin = HttpContext.Items["IsAdmin"] as bool? ?? false;
 
-            if(!isAdmin)
-            {
-                request.UserId = userId;
-            }
+            requestToSend.CurrentUserId = userId;
+            requestToSend.IsAdmin = isAdmin;
 
-            var result = await _blogService.GetBlogsPagination(request);
+            var result = await _blogService.GetBlogsPagination(requestToSend);
 
             return Json(result);
         }

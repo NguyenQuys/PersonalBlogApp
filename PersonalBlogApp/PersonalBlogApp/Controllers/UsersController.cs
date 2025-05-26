@@ -13,7 +13,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PersonalBlogApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
@@ -23,38 +23,29 @@ namespace PersonalBlogApp.Controllers
             _userService = userService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("Users")]
-        public async Task<IActionResult> Users() // send params form search and filter 
+        public async Task<IActionResult> Users() => View();
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("Users/GetUsersPagination")]
+        public async Task<IActionResult> GetUsersPagination([FromQuery] PaginationRequest request)
         {
-            return View();
-        }
-
-        [HttpGet("Users/GetUsersPagination")] 
-        public async Task<IActionResult> GetUsersPagination()
-        {
-            var draw = Request.Query["draw"].FirstOrDefault();
-            var start = Request.Query["start"].FirstOrDefault();
-            var length = Request.Query["length"].FirstOrDefault();
-            var searchValue = Request.Query["search[value]"].FirstOrDefault();
-
-            int drawInt = 0;
-            int.TryParse(draw, out drawInt);
-
-            int skip = 0;
-            int.TryParse(start, out skip);
-
-            int pageSize = 10;
-            int.TryParse(length, out pageSize);
-
-            var request = new PaginationRequest
+            var requestToSend = new PaginationRequest
             {
-                Draw = drawInt,
-                Index = (skip / pageSize) + 1,
-                PageSize = pageSize,
-                Searchvalue = searchValue,
+                Draw = request.Draw,
+                Start = (request.Start / request.Length) + 1,
+                Length = request.Length,
+                Searchvalue = request.Searchvalue,
             };
 
-            var result = await _userService.GetUsersPagination(request);
+            var userId = HttpContext.Items["UserId"]?.ToString();
+            var isAdmin = HttpContext.Items["IsAdmin"] as bool? ?? false;
+
+            requestToSend.CurrentUserId = userId;
+            requestToSend.IsAdmin = isAdmin;
+
+            var result = await _userService.GetUsersPagination(requestToSend);
             return Json(result);
         }
 
@@ -74,6 +65,7 @@ namespace PersonalBlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit([FromForm] DetailUserResponse userRequest,List<string> rolesSelected)
         {
             var result = await _userService.UpdateAsync(userRequest.User,rolesSelected);
@@ -99,6 +91,7 @@ namespace PersonalBlogApp.Controllers
         }
 
         [HttpDelete("Users/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(string id)
         {
             await _userService.DeleteAsync(id);

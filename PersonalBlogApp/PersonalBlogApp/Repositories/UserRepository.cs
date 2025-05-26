@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PersonalBlogApp.DTOs;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
@@ -8,8 +9,7 @@ namespace PersonalBlogApp.Repositories
     public interface IUserRepository : IGenericsRepository<User>
     {
         Task<IEnumerable<User>> GetAllAsync(string? username);
-        Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request);
-
+        Task<PaginationResponse<UserDTO>> GetUsersPagination(PaginationRequest request);
     }
 
     public class UserRepository : GenericsRepository<User>, IUserRepository
@@ -28,7 +28,7 @@ namespace PersonalBlogApp.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<PaginationResponse<User>> GetUsersPagination(PaginationRequest request)
+        public async Task<PaginationResponse<UserDTO>> GetUsersPagination(PaginationRequest request)
         {
             var query = _dbSet.AsQueryable();
 
@@ -39,8 +39,8 @@ namespace PersonalBlogApp.Repositories
 
             int recordsTotal = await query.CountAsync();
 
-            int page = request.Index > 0 ? request.Index : 1;
-            int pageSize = request.PageSize > 0 ? request.PageSize : 10;
+            int page = request.Start > 0 ? request.Start : 1;
+            int pageSize = request.Length > 0 ? request.Length : 10;
 
             var data = await query
                 .OrderByDescending(m => m.UserName)
@@ -48,12 +48,20 @@ namespace PersonalBlogApp.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new PaginationResponse<User>
+            var result = data.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Avatar = user.AvatarUrl,
+            }).ToList();
+
+            return new PaginationResponse<UserDTO>
             {
                 Draw = request.Draw,
                 RecordsFiltered = recordsTotal,
                 RecordsTotal = recordsTotal,
-                Data = data
+                Data = result
             };
         }
     }

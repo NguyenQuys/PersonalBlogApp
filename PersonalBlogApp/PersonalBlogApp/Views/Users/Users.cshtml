@@ -39,58 +39,25 @@
 					url: 'Users/GetUsersPagination',
 					type: 'GET'
 				},
-						columns: [
-			{ data: 'id' },
-			{ data: 'userName' },
-			{ data: 'email' },
-			{
-				data: 'avatarUrl',
-				render: function(data, type, row) {
-					if (data) {
-						return `<img src="${data}" height="70" width="70" class="rounded-circle border border-primary">`;
-					}
-					return '';
-				}
-			},
-			{
-				data: null,
-				orderable: false,
-				render: function (data, type, row) {
-					let currentUserId = '@currentUserId';
-					let isAdmin = '@User.IsInRole("Admin")'.toLowerCase() === 'true';
-
-					let dropdownHtml = `
-						<div class="dropdown">
-							<button class="btn btn-link dropdown-toggle" type="button" id="userActionsDropdown-${row.id}" data-bs-toggle="dropdown" aria-expanded="false">
-								More
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="userActionsDropdown-${row.id}">
-					`;
-
-					if (row.id === currentUserId) {
-						dropdownHtml += `
-							<li><a class="dropdown-item" href="/Users/Edit/${row.id}">Edit</a></li>
-						`;
-					}
-
-					dropdownHtml += `
-						<li><a class="dropdown-item" href="/Users/${row.id}">Details</a></li>
-					`;
-
-					if (row.id === currentUserId || isAdmin) {
-						dropdownHtml += `
-							<li><a class="dropdown-item" style="cursor:pointer" onclick="DeleteUser('${row.id}')">Delete</a></li>
-						`;
-					}
-
-					dropdownHtml += `</ul></div>`;
-					return dropdownHtml;
-				}
-			}
-		]
-
-			});
-		});
+				columns: [
+						{ data: 'id' },
+						{ data: 'userName' },
+						{ data: 'email' },
+						{
+							data: 'avatar',
+							render: function(data, type, row) {
+								if (data) {
+									return `<img src="${data}" height="70" width="70" class="rounded-circle border border-primary">`;
+								}
+								return '';
+							}
+						},
+						{
+							data: 'actions'
+						}
+					]
+					});
+				});
 	</script>
 }
 
