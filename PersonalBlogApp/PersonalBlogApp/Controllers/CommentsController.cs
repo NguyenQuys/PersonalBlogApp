@@ -34,7 +34,5 @@ namespace PersonalBlogApp.Controllers
             TempData["Success"] = result;
             return RedirectToAction("Details","Blogs", new { id = blogId });
         }
-
-        
     }
 }

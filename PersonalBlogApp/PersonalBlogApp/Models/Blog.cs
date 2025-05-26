@@ -23,5 +23,7 @@ namespace PersonalBlogApp.Models
         public bool IsPublic { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
+
+        public ICollection<Like> Likes { get; set; }
     }
 }

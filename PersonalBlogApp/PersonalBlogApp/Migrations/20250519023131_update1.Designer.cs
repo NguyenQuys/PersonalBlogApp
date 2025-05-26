@@ -12,7 +12,7 @@ using PersonalBlogApp.Models;
 namespace PersonalBlogApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250520145145_update1")]
+    [Migration("20250519023131_update1")]
     partial class update1
     {
         /// <inheritdoc />

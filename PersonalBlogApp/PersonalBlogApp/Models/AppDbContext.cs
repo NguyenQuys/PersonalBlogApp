@@ -10,6 +10,7 @@ namespace PersonalBlogApp.Models
 
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +43,24 @@ namespace PersonalBlogApp.Models
                 .WithMany(c => c.Replies)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Like - blog
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.Blog)
+                .WithMany(b => b.Likes)
+                .HasForeignKey(l=>l.BlogId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Like - user 
+            modelBuilder.Entity<Like>()
+                .HasOne(u=>u.Users)
+                .WithMany(m=>m.Likes)
+                .HasForeignKey(u=>u.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Like>()
+                .HasIndex(l => new { l.UserId, l.BlogId })
+                .IsUnique();
         }
     }
 }
