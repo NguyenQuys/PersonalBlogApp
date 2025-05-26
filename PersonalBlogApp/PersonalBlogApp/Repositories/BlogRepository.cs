@@ -7,6 +7,7 @@ using PersonalBlogApp.Helpers;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
+using PersonalBlogApp.Helpers;
 
 namespace PersonalBlogApp.Repositories
 {
@@ -49,30 +50,21 @@ namespace PersonalBlogApp.Repositories
 
         public async Task<PaginationResponse<BlogDTO>> GetBlogsPagination(PaginationRequest request)
         {
+            string[] columns = { CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col0)
+                                ,CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col1)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col2)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col3)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col4)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col5) };
+            string sortColumn = columns[request.OrderColumn];
+            bool ascending = request.OrderDir == "asc";
+
             var query = _dbSet.AsQueryable();
-
-            //// Map column index to property name
-            //string[] columns = { request.Col0, request.Col1, request.Col2, request.Col3, request.Col4, request.Col5 };
-            //string sortColumn = columns[request.OrderColumn];
-            //bool ascending = request.OrderDir == "asc";
-
-            //// Apply sorting
-            //if (!string.IsNullOrEmpty(sortColumn))
-            //{
-            //    query = ascending
-            //        ? query.OrderByDynamic(sortColumn)
-            //        : query.OrderByDescendingDynamic(sortColumn);
-            //}
-            //else
-            //{
-            //    query = query.OrderByDescending(m => m.CreatedDate);
-            //}
-
 
             if (!string.IsNullOrEmpty(request.Searchvalue))
             {
-                query = query.Where(m => m.Title.Contains(request.Searchvalue) 
-                                      || m.Content.Contains(request.Searchvalue) 
+                query = query.Where(m => m.Title.Contains(request.Searchvalue)
+                                      || m.Content.Contains(request.Searchvalue)
                                       || m.User.UserName.Contains(request.Searchvalue)
                                       || m.Priority.ToString().Contains(request.Searchvalue));
             }
@@ -87,17 +79,23 @@ namespace PersonalBlogApp.Repositories
             int page = request.Start > 0 ? request.Start : 1;
             int pageSize = request.Length > 0 ? request.Length : 10;
 
-            var data = query;
-
-            if (request.OrderDir == "asc")
+            if (!string.IsNullOrEmpty(sortColumn))
             {
-                data = await data
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                query = ascending
+                    ? query.OrderByDynamic(sortColumn)
+                    : query.OrderByDescendingDynamic(sortColumn);
+            }
+            else
+            {
+                query = query.OrderByDescending(m => m.CreatedDate);
             }
 
-            var result = data.Select(item => new BlogDTO
+            var pagedData = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = pagedData.Select(item => new BlogDTO
             {
                 Id = item.Id,
                 Title = item.Title,

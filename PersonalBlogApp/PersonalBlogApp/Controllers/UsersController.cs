@@ -31,21 +31,15 @@ namespace PersonalBlogApp.Controllers
         [HttpGet("Users/GetUsersPagination")]
         public async Task<IActionResult> GetUsersPagination([FromQuery] PaginationRequest request)
         {
-            var requestToSend = new PaginationRequest
-            {
-                Draw = request.Draw,
-                Start = (request.Start / request.Length) + 1,
-                Length = request.Length,
-                Searchvalue = request.Searchvalue,
-            };
+            request.Start = (request.Start / request.Length) + 1;
 
             var userId = HttpContext.Items["UserId"]?.ToString();
             var isAdmin = HttpContext.Items["IsAdmin"] as bool? ?? false;
 
-            requestToSend.CurrentUserId = userId;
-            requestToSend.IsAdmin = isAdmin;
+            //request.CurrentUserId = userId;
+            //request.IsAdmin = isAdmin;
 
-            var result = await _userService.GetUsersPagination(requestToSend);
+            var result = await _userService.GetUsersPagination(request);
             return Json(result);
         }
 

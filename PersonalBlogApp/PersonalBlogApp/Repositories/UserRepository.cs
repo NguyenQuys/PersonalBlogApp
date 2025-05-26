@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PersonalBlogApp.DTOs;
+using PersonalBlogApp.Helpers;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
@@ -30,11 +31,21 @@ namespace PersonalBlogApp.Repositories
 
         public async Task<PaginationResponse<UserDTO>> GetUsersPagination(PaginationRequest request)
         {
+            string[] columns = { CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col0)
+                                ,CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col1)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col2)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col3)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col4)
+                                , CapitalFirstLetterUtils.CapitalizeFirstLetter(request.Col5) };
+            string sortColumn = columns[request.OrderColumn];
+            bool ascending = request.OrderDir == "asc";
+
             var query = _dbSet.AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Searchvalue))
             {
-                query = query.Where(m => m.UserName.Contains(request.Searchvalue) || m.Email.Contains(request.Searchvalue));
+                query = query.Where(m => m.UserName.Contains(request.Searchvalue)
+                                      || m.Email.Contains(request.Searchvalue));
             }
 
             int recordsTotal = await query.CountAsync();
@@ -42,18 +53,24 @@ namespace PersonalBlogApp.Repositories
             int page = request.Start > 0 ? request.Start : 1;
             int pageSize = request.Length > 0 ? request.Length : 10;
 
-            var data = await query
-                .OrderByDescending(m => m.UserName)
+            if (!string.IsNullOrEmpty(sortColumn))
+            {
+                query = ascending
+                    ? query.OrderByDynamic(sortColumn)
+                    : query.OrderByDescendingDynamic(sortColumn);
+            }
+  
+            var pagedData = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            var result = data.Select(user => new UserDTO
+            var result = pagedData.Select(item => new UserDTO
             {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                Avatar = user.AvatarUrl,
+                Id = item.Id,
+                UserName = item.UserName,
+                Email = item.Email,
+                Avatar = item.AvatarUrl,
             }).ToList();
 
             return new PaginationResponse<UserDTO>
