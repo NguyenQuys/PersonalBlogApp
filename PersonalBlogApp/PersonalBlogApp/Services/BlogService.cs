@@ -73,14 +73,12 @@ namespace PersonalBlogApp.Services
 
             foreach (var blog in result.Data)
             {
-                if (users.TryGetValue(blog.UserId, out var userName))
-                {
-                    blog.UserName = userName;
-                }
-                else
-                {
-                    blog.UserName = "Unknown";
-                }
+
+
+                var userName = "Unknown";
+                users.TryGetValue(blog.UserId, out userName);
+                blog.UserName = userName;
+
 
                 blog.Actions = $@"
                                 <div class='dropdown'>
@@ -106,8 +104,6 @@ namespace PersonalBlogApp.Services
                 }
             }
 
-
-            
             return result;
         }
 

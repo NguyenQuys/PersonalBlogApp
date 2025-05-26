@@ -94,6 +94,10 @@ namespace PersonalBlogApp.Services
             var result = await _userRepository.GetUsersPagination(request);
             foreach (var user in result.Data)
             {
+                user.Avatar = $@"
+                                   <img src='{user.Avatar}' height='70' width='70' class='rounded-circle border border-primary'>
+                                ";
+
                 user.Actions = $@"
                                 <div class='dropdown'>
                                     <button class='btn btn-link dropdown-toggle' type='button' id='userActionsDropdown-{user.Id}' data-bs-toggle='dropdown' aria-expanded='false'>

@@ -52,7 +52,10 @@ namespace PersonalBlogApp.Repositories
 
             if (!string.IsNullOrEmpty(request.Searchvalue))
             {
-                query = query.Where(m => m.Title.Contains(request.Searchvalue) || m.Content.Contains(request.Searchvalue));
+                query = query.Where(m => m.Title.Contains(request.Searchvalue) 
+                                      || m.Content.Contains(request.Searchvalue) 
+                                      || m.User.UserName.Contains(request.Searchvalue)
+                                      || m.Priority.ToString().Contains(request.Searchvalue));
             }
 
             if (!request.IsAdmin)

@@ -43,18 +43,8 @@
 						{ data: 'id' },
 						{ data: 'userName' },
 						{ data: 'email' },
-						{
-							data: 'avatar',
-							render: function(data, type, row) {
-								if (data) {
-									return `<img src="${data}" height="70" width="70" class="rounded-circle border border-primary">`;
-								}
-								return '';
-							}
-						},
-						{
-							data: 'actions'
-						}
+						{ data: 'avatar' },
+						{ data: 'actions' }
 					]
 					});
 				});
