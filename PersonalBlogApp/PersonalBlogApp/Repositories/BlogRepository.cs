@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using NuGet.Versioning;
 using PersonalBlogApp.DTOs;
+using PersonalBlogApp.Helpers;
 using PersonalBlogApp.Models;
 using PersonalBlogApp.Requests;
 using PersonalBlogApp.Responses;
@@ -50,6 +51,24 @@ namespace PersonalBlogApp.Repositories
         {
             var query = _dbSet.AsQueryable();
 
+            //// Map column index to property name
+            //string[] columns = { request.Col0, request.Col1, request.Col2, request.Col3, request.Col4, request.Col5 };
+            //string sortColumn = columns[request.OrderColumn];
+            //bool ascending = request.OrderDir == "asc";
+
+            //// Apply sorting
+            //if (!string.IsNullOrEmpty(sortColumn))
+            //{
+            //    query = ascending
+            //        ? query.OrderByDynamic(sortColumn)
+            //        : query.OrderByDescendingDynamic(sortColumn);
+            //}
+            //else
+            //{
+            //    query = query.OrderByDescending(m => m.CreatedDate);
+            //}
+
+
             if (!string.IsNullOrEmpty(request.Searchvalue))
             {
                 query = query.Where(m => m.Title.Contains(request.Searchvalue) 
@@ -68,11 +87,15 @@ namespace PersonalBlogApp.Repositories
             int page = request.Start > 0 ? request.Start : 1;
             int pageSize = request.Length > 0 ? request.Length : 10;
 
-            var data = await query
-                .OrderByDescending(m => m.CreatedDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var data = query;
+
+            if (request.OrderDir == "asc")
+            {
+                data = await data
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
 
             var result = data.Select(item => new BlogDTO
             {
